@@ -64,17 +64,26 @@ export class DBServices {
       throw error?.message;
     }
   }
-  async getAllVideos(options) {
+  async getAllVideos(
+    sortBy = "createdAt",
+    sortType = "desc",
+    userId = null,
+    page = 1
+  ) {
     try {
-      // Create the base URL
-      //let url = `${conf.ServerUrl}/videos/get-all-videos?sortBy=${sortBy}&sortType=${sortType}`;
       let url = `${conf.ServerUrl}/videos/get-all-videos`;
+      // Construct query parameters
+      const queryParams = new URLSearchParams({
+        sortBy,
+        sortType,
+        page: page.toString(), // Convert page to string
+      });
       // Append userId to the URL only if it's provided
-      if (options) {
-        const queryParams = new URLSearchParams(options);
-        url += `?${queryParams.toString()}`;
-        //url += `&userId=${userId}`;
+      if (userId) {
+        queryParams.append("userId", userId);
       }
+      // Append query parameters to the URL
+      url += `?${queryParams.toString()}`;
       //console.log("enter in getall videos ", url);
       // Make the request
       const res = await axios.get(url);
