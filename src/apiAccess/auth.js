@@ -12,10 +12,11 @@ export const loginUser = async ({ emailOrUserName, password }) => {
         "Content-Type": "multipart/form-data",
       },
     });
+    //console.log("auth res: ", res);
     return res;
   } catch (error) {
     console.error("Error in login user:: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 // register user
@@ -33,19 +34,25 @@ export const registerUser = async ({
     formData.append("email", email);
     formData.append("password", password);
     formData.append("fullName", fullName);
-    formData.append("avatar", avatar);
-    formData.append("coverImage", coverImage);
-
+    formData.append("avatar", avatar[0]);
+    formData.append("coverImage", coverImage[0]);
+    // console.log("formData entries:");
+    // for (var pair of formData.entries()) {
+    //   console.log(pair[0] + ", " + pair[1]);
+    // }
     const res = await axios.post(`${conf.ServerUrl}/users/register`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-
-    return res;
+    if (res.status >= 200 && res.status < 300) {
+      return res; // Assuming your API returns the user data upon successful registration
+    } else {
+      throw new Error(`Failed to register user. Status: ${res}`);
+    }
   } catch (error) {
     console.error("Error in register user:: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 
