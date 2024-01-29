@@ -2,11 +2,14 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { logoutUser } from "../../apiAccess/auth";
+import { useCookies } from "react-cookie";
 
 function LogOutBtn() {
   const dispatch = useDispatch();
+  const [cookie] = useCookies();
+
   async function handleLogout() {
-    await logoutUser();
+    await logoutUser(cookie?.["accessToken"]);
     dispatch(logout());
   }
 

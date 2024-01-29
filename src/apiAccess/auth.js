@@ -57,11 +57,12 @@ export const registerUser = async ({
 };
 
 // logout user
-export const logoutUser = async () => {
+export const logoutUser = async (accessToken) => {
   try {
     const res = await axios.get(`http://localhost:8000/api/v1/users/logout`, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
       withCredentials: true,
     });
