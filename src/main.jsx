@@ -11,6 +11,7 @@ import {
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
+import MyVideos from "./pages/MyVideos.jsx";
 import store from "./store/store.js";
 import { Provider } from "react-redux";
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/MyVideos" element={<MyVideos />} />
     </Route>
   )
 );

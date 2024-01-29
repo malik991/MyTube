@@ -2,7 +2,7 @@ import Logo from "./logo";
 import Footer from "./footer/footer";
 import Header from "./header/header";
 import Container from "./container/container";
-import logOutBtn from "./header/logOutBtn";
+import LogOutBtn from "./header/LogOutBtn";
 import Button from "./Button";
 import VideoCard from "./VideoCard";
 import InputField from "./InputField";
@@ -15,7 +15,7 @@ export {
   Footer,
   Header,
   Container,
-  logOutBtn,
+  LogOutBtn,
   Button,
   VideoCard,
   InputField,

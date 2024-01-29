@@ -25,8 +25,8 @@ function LoginComponent() {
       setBtnClicked(true);
       const res = await loginUser(data);
       if (res) {
-        dispatch(authLogin(res));
-        navigate("/");
+        dispatch(authLogin(res.data));
+        navigate("/MyVideos");
         //}
       }
     } catch (error) {

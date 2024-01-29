@@ -59,11 +59,16 @@ export const registerUser = async ({
 // logout user
 export const logoutUser = async () => {
   try {
-    const res = await axios.get(`${conf.ServerUrl}/users/logout`);
+    const res = await axios.get(`http://localhost:8000/api/v1/users/logout`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return res;
   } catch (error) {
-    console.error("Error in logout user:: ", error?.message);
-    throw error?.message;
+    console.error("Error in logout user:: ", error);
+    throw error;
   }
 };
 // change password

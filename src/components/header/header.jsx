@@ -1,10 +1,11 @@
 import React from "react";
-import { Logo, Container, logOutBtn } from "../index.js";
+import { Logo, Container, LogOutBtn } from "../index.js";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
+
   const navItems = [
     {
       name: "home",
@@ -50,7 +51,7 @@ function Header() {
             )}
             {authStatus && (
               <li>
-                <logOutBtn />
+                <LogOutBtn />
               </li>
             )}
           </ul>
