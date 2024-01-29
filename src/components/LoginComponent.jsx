@@ -16,7 +16,7 @@ function LoginComponent() {
   const { register, handleSubmit, control, formState } = useForm(); // control use for devTool
   const [error, setError] = useState("");
   const [btnClicked, setBtnClicked] = useState(false);
-  const [cookie, setCookie] = useCookies();
+  const [cookie, setCookie] = useCookies(['accessToken', 'refreshToken']);
   const { errors: hookErrors } = formState; // hook field hookErrors
 
   const loginFun = async (data) => {
@@ -26,9 +26,8 @@ function LoginComponent() {
       // chec btn clicked and change its appearence
       setBtnClicked(true);
       const res = await loginUser(data);
-      console.log(res);
-      setCookie("accessToken", res.data.data.accessToken);
-      setCookie("refreshToken", res.data.data.refreshToken);
+      setCookie("accessToken", res.data.accessToken);
+      setCookie("refreshToken", res.data.refreshToken);
       if (res) {
         dispatch(authLogin(res.data));
         navigate("/MyVideos");
@@ -137,11 +136,10 @@ function LoginComponent() {
             )}
             <Button
               type="submit"
-              className={`w-full ${
-                btnClicked
-                  ? "bg-gray-300 text-blue-700"
-                  : "bg-blue-500 text-black"
-              }`}
+              className={`w-full ${btnClicked
+                ? "bg-gray-300 text-blue-700"
+                : "bg-blue-500 text-black"
+                }`}
               disabled={btnClicked}
             >
               {btnClicked ? "Wait..." : "Sign in"}

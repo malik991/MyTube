@@ -1,5 +1,6 @@
 import conf from "../config/viteConfiguration";
 import axios from "axios";
+import { Cookies } from "react-cookie";
 
 // login
 export const loginUser = async ({ emailOrUserName, password }) => {
@@ -13,7 +14,7 @@ export const loginUser = async ({ emailOrUserName, password }) => {
       },
     });
     //console.log("auth res: ", res);
-    return res;
+    return res.data;
   } catch (error) {
     console.error("Error in login user:: ", error);
     throw error;
@@ -59,14 +60,14 @@ export const registerUser = async ({
 // logout user
 export const logoutUser = async (accessToken) => {
   try {
-    const res = await axios.get(`http://localhost:8000/api/v1/users/logout`, {
+    const res = await axios.get(`${conf.ServerUrl}/users/logout`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       withCredentials: true,
     });
-    return res;
+    return res.data;
   } catch (error) {
     console.error("Error in logout user:: ", error);
     throw error;

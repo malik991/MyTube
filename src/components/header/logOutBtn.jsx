@@ -6,10 +6,12 @@ import { useCookies } from "react-cookie";
 
 function LogOutBtn() {
   const dispatch = useDispatch();
-  const [cookie] = useCookies();
+  const [cookie, _, removeCookie] = useCookies();
 
   async function handleLogout() {
-    await logoutUser(cookie?.["accessToken"]);
+    const res = await logoutUser(cookie?.["accessToken"]);
+    removeCookie("accessToken");
+    removeCookie("refreshToken");
     dispatch(logout());
   }
 
