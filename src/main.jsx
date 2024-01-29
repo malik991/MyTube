@@ -29,7 +29,7 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <CookiesProvider defaultSetOptions={{ httpOnly: true }}>
+    <CookiesProvider>
       <Provider store={store}>
         <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
       </Provider>
