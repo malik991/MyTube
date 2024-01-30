@@ -1,6 +1,10 @@
 // VideoCard.jsx
 
 import React from "react";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import AvTimerIcon from "@mui/icons-material/AvTimer";
+import CommentIcon from "@mui/icons-material/Comment";
+import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 
 const VideoCard = ({
   thumbnail,
@@ -8,6 +12,8 @@ const VideoCard = ({
   duration,
   views,
   title,
+  Comments,
+  Likes,
   isExpanded,
   setExpandedVideo,
 }) => {
@@ -41,8 +47,21 @@ const VideoCard = ({
               alt="Video Thumbnail"
             />
             <div className="p-2 absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white">
-              <span>{duration} seconds</span>
-              <span className="ml-2">{views} views</span>
+              <span>
+                {duration} <AvTimerIcon />
+              </span>
+              <span className="ml-2">
+                {views}
+                <VisibilityIcon />
+              </span>
+              <span className="ml-2">
+                {Comments}
+                <CommentIcon />
+              </span>
+              <span className="ml-2">
+                {Likes}
+                <ThumbUpOffAltIcon />
+              </span>
             </div>
           </>
         )}

@@ -69,6 +69,8 @@ function Home() {
               duration={video.duration}
               views={video.views}
               title={video.title}
+              Comments={video.totalComments}
+              Likes={video.totalLikes}
               isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
               setExpandedVideo={setExpandedVideo}
             />
