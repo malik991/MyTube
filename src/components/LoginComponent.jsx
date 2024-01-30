@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
 
 import { useDispatch } from "react-redux";
-import { InputField, Button, Logo } from "./index";
+import { Button, InputField, Logo } from "./index";
 //import authServieObj from "../appwrite/auth";
-import { loginUser } from "../apiAccess/auth";
-import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form"; // this is the main hook by which we will use forms
+import { loginUser } from "../apiAccess/auth";
 // import { DevTool } from "@hookform/devtools";
 
 function LoginComponent() {
@@ -16,7 +15,6 @@ function LoginComponent() {
   const { register, handleSubmit, control, formState } = useForm(); // control use for devTool
   const [error, setError] = useState("");
   const [btnClicked, setBtnClicked] = useState(false);
-  const [cookie, setCookie] = useCookies();
   const { errors: hookErrors } = formState; // hook field hookErrors
 
   const loginFun = async (data) => {
@@ -27,8 +25,6 @@ function LoginComponent() {
       setBtnClicked(true);
       const res = await loginUser(data);
       console.log(res);
-      setCookie("accessToken", res.data.data.accessToken);
-      setCookie("refreshToken", res.data.data.refreshToken);
       if (res) {
         dispatch(authLogin(res.data));
         navigate("/MyVideos");

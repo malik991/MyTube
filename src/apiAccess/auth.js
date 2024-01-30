@@ -11,6 +11,7 @@ export const loginUser = async ({ emailOrUserName, password }) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     });
     //console.log("auth res: ", res);
     return res;
@@ -57,12 +58,11 @@ export const registerUser = async ({
 };
 
 // logout user
-export const logoutUser = async (accessToken) => {
+export const logoutUser = async () => {
   try {
     const res = await axios.get(`http://localhost:8000/api/v1/users/logout`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
       },
       withCredentials: true,
     });
