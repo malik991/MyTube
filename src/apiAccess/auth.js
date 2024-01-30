@@ -60,7 +60,7 @@ export const registerUser = async ({
 // logout user
 export const logoutUser = async () => {
   try {
-    const res = await axios.get(`http://localhost:8000/api/v1/users/logout`, {
+    const res = await axios.get(`${conf.ServerUrl}/users/logout`, {
       headers: {
         "Content-Type": "application/json",
       },

@@ -18,13 +18,13 @@ function LoginComponent() {
   const { errors: hookErrors } = formState; // hook field hookErrors
 
   const loginFun = async (data) => {
-    console.log("function called", data);
+    //console.log("function called", data);
     setError("");
     try {
       // chec btn clicked and change its appearence
       setBtnClicked(true);
       const res = await loginUser(data);
-      console.log(res);
+      //console.log(res);
       if (res) {
         dispatch(authLogin(res.data));
         navigate("/MyVideos");

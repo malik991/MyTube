@@ -94,15 +94,23 @@ export class DBServices {
     }
   }
   // user specific videos
-  async getUserVideos() {
+  async getUserVideos(page = 1) {
     try {
-      const res = await axios.get(
-        `${conf.ServerUrl}/videos/user-specific-videos`
-      );
+      let url = `${conf.ServerUrl}/videos/user-specific-videos`;
+      const queryParams = new URLSearchParams({
+        page: page.toString(), // Convert page to string
+      });
+      url += `?${queryParams.toString()}`;
+      const res = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       return res;
     } catch (error) {
       console.error("Error in get user specific videos :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   // delete video

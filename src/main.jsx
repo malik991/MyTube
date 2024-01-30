@@ -14,7 +14,6 @@ import SignUp from "./pages/SignUp.jsx";
 import MyVideos from "./pages/MyVideos.jsx";
 import store from "./store/store.js";
 import { Provider } from "react-redux";
-import { CookiesProvider } from "react-cookie";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,10 +28,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <CookiesProvider defaultSetOptions={{ httpOnly: true }}>
-      <Provider store={store}>
-        <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
-      </Provider>
-    </CookiesProvider>
+    <Provider store={store}>
+      <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+    </Provider>
   </React.StrictMode>
 );

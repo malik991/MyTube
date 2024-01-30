@@ -2,13 +2,16 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { logoutUser } from "../../apiAccess/auth";
+import { useNavigate } from "react-router-dom";
 
 function LogOutBtn() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   async function handleLogout() {
     await logoutUser();
     dispatch(logout());
+    navigate("/");
   }
 
   return (

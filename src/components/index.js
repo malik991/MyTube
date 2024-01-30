@@ -9,6 +9,7 @@ import InputField from "./InputField";
 import LoginComponent from "./LoginComponent";
 import SignUpComponenet from "./signUpComponenet";
 import ImageUploadField from "./ImageUploadField";
+import { MyVideoComponent } from "./MyVideoComponent";
 
 export {
   Logo,
@@ -22,4 +23,5 @@ export {
   LoginComponent,
   SignUpComponenet,
   ImageUploadField,
+  MyVideoComponent,
 };
