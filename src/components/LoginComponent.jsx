@@ -27,7 +27,7 @@ function LoginComponent() {
       //console.log(res);
       if (res) {
         dispatch(authLogin(res.data));
-        navigate("/MyVideos");
+        navigate("/my-videos");
         //}
       }
     } catch (error) {

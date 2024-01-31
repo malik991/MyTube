@@ -16,11 +16,11 @@ export const MyVideoComponent = () => {
 
   const fetchData = async (page) => {
     try {
+      if (expandedVideo) {
+        setExpandedVideo(null);
+      }
       const response = await dbServiceObj.getUserVideos(page);
       const { docs, totalDocs, totalPages } = response.data.data;
-      //if (totalDocs === 0) {
-      console.log("total docs", totalDocs);
-      //}
 
       setVideos(docs);
       setTotalVideos(totalDocs);
@@ -30,7 +30,6 @@ export const MyVideoComponent = () => {
     }
   };
   const handlePageChange = (newPage) => {
-    //console.log("clicked", newPage);
     setBtnClicked(true);
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -73,6 +72,9 @@ export const MyVideoComponent = () => {
                   duration={video.duration}
                   views={video.views}
                   title={video.title}
+                  Comments={video.totalComments}
+                  Likes={video.totalLikes}
+                  videoId={video._id}
                   isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
                   setExpandedVideo={setExpandedVideo}
                 />

@@ -137,6 +137,25 @@ export class DBServices {
       throw error?.message;
     }
   }
+
+  // watch video views
+  async getVideoViews(videoId) {
+    try {
+      const res = await axios.get(
+        `${conf.ServerUrl}/videos/watch-video/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error in get video views :: ", error);
+      throw error?.message;
+    }
+  }
   // toggle publish status of video
   async toggledPublishVideoStatus(videoId) {
     try {
@@ -268,6 +287,50 @@ export class DBServices {
     } catch (error) {
       console.error("Error in getting single playlist by id :: ", error);
       throw error?.message;
+    }
+  }
+
+  // get all comments by video id
+  async getCommentsByVideoId(videoId) {
+    try {
+      if (!videoId) {
+        return "Video Id is mendatory";
+      }
+      const res = await axios.get(
+        `${conf.ServerUrl}/comment/get-comments/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error in getting single playlist by id :: ", error);
+      throw error;
+    }
+  }
+
+  // get likes by video Id
+  async getLikesByVideoId(videoId) {
+    try {
+      if (!videoId) {
+        return "Video Id is mendatory";
+      }
+      const res = await axios.get(
+        `${conf.ServerUrl}/like/liked-videos-by-videoId/v/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error in getting single playlist by id :: ", error);
+      throw error;
     }
   }
 }

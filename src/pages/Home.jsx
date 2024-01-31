@@ -16,6 +16,10 @@ function Home() {
 
   const fetchData = async (page) => {
     try {
+      if (expandedVideo) {
+        //console.log("fetch data");
+        setExpandedVideo(null); // to remove the expanded video from next page
+      }
       const response = await dbServiceObj.getAllVideos(
         "title",
         "desc",
@@ -35,7 +39,6 @@ function Home() {
   };
 
   const handlePageChange = (newPage) => {
-    //console.log("clicked", newPage);
     setBtnClicked(true);
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -54,7 +57,7 @@ function Home() {
         ...getVideos.filter((video) => video.videoFile !== expandedVideo),
       ]
     : getVideos;
-  //console.log("expendedVideo: ", expandedVideo);
+  // console.log("expendedVideo: ", expandedVideo);
 
   return (
     <div className="w-full py-8">
@@ -71,6 +74,7 @@ function Home() {
               title={video.title}
               Comments={video.totalComments}
               Likes={video.totalLikes}
+              videoId={video._id}
               isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
               setExpandedVideo={setExpandedVideo}
             />

@@ -8,6 +8,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
+import { ProtectedLayout } from "./components/index.js";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
@@ -19,9 +20,30 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/MyVideos" element={<MyVideos />} />
+      <Route
+        path="/login"
+        element={
+          <ProtectedLayout authentication={false}>
+            <Login />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <ProtectedLayout authentication={false}>
+            <SignUp />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/my-videos"
+        element={
+          <ProtectedLayout authentication>
+            <MyVideos />
+          </ProtectedLayout>
+        }
+      />
     </Route>
   )
 );

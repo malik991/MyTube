@@ -1,10 +1,11 @@
 // VideoCard.jsx
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import CommentIcon from "@mui/icons-material/Comment";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
+import dbServiceObj from "../apiAccess/confYoutubeApi";
 
 const VideoCard = ({
   thumbnail,
@@ -14,17 +15,46 @@ const VideoCard = ({
   title,
   Comments,
   Likes,
+  videoId,
   isExpanded,
   setExpandedVideo,
 }) => {
-  const handleVideoClick = () => {
+  const videoRef = useRef(null);
+  const [videoComments, setVideoComments] = useState([]);
+  const [userComment, setUserComment] = useState("");
+  const [videoLikes, setVideoLikes] = useState(0);
+  const handleVideoClick = async (e) => {
+    try {
+      //console.log("video iD, ", videoId);
+      const views = await dbServiceObj.getVideoViews(videoId);
+      const commentsData = await dbServiceObj.getCommentsByVideoId(videoId);
+      const likesData = await dbServiceObj.getLikesByVideoId(videoId);
+      // console.log("views: ", views);
+      // console.log("commentsData: ", commentsData);
+      // console.log("likesData: ", likesData);
+    } catch (error) {
+      console.log("Error in Video Card.jsx:: ", error);
+      throw error;
+    }
     setExpandedVideo((prevExpanded) =>
       prevExpanded === videoFile ? null : videoFile
     );
+    // Scroll to the expanded video
+    if (videoRef.current) {
+      e.preventDefault();
+      videoRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "end",
+      });
+    }
   };
 
   return (
-    <div className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}>
+    <div
+      ref={videoRef}
+      className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
+    >
       <div className="p-2">
         <span className="text-black">
           {!isExpanded && `Video title: ${title}`}
@@ -51,16 +81,13 @@ const VideoCard = ({
                 {duration} <AvTimerIcon />
               </span>
               <span className="ml-2">
-                {views}
-                <VisibilityIcon />
+                {views} <VisibilityIcon />
               </span>
               <span className="ml-2">
-                {Comments}
-                <CommentIcon />
+                {Comments} <CommentIcon />
               </span>
               <span className="ml-2">
-                {Likes}
-                <ThumbUpOffAltIcon />
+                {Likes} <ThumbUpOffAltIcon />
               </span>
             </div>
           </>
