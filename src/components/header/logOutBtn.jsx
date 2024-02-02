@@ -11,7 +11,7 @@ function LogOutBtn() {
   async function handleLogout() {
     await logoutUser();
     dispatch(logout());
-    navigate("/");
+    navigate("/login");
   }
 
   return (

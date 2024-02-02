@@ -1,7 +1,7 @@
 import React, { useId } from "react";
 
 const InputField = React.forwardRef(function Input(
-  { label, type = "text", className = "", ...props },
+  { label, type = "text", className = "", onChange, ...props },
   ref // this is the thing which provide us reference
 ) {
   const id = useId();
@@ -20,6 +20,7 @@ const InputField = React.forwardRef(function Input(
            focus:bg-gray-50 duration-200 border border-gray-200 w-full ${className}`}
         type={type}
         ref={ref}
+        onChange={onChange}
         {...props}
         id={props.id || id}
       />

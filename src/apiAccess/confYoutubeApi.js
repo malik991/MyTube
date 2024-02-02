@@ -312,6 +312,31 @@ export class DBServices {
     }
   }
 
+  // insert a comment
+  async addComment(content, videoId) {
+    try {
+      if (!videoId || !content) {
+        return "Video Id and content of comment is mendatory";
+      }
+      const formData = new FormData();
+      formData.append("content", content);
+      const res = await axios.post(
+        `${conf.ServerUrl}/comment/add-comment/${videoId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while inserting comment :: ", error);
+      throw error;
+    }
+  }
+
   // get likes by video Id
   async getLikesByVideoId(videoId) {
     try {
@@ -330,6 +355,28 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error in getting single playlist by id :: ", error);
+      throw error;
+    }
+  }
+  // toggle video likes
+  async toggleVideoLikes(videoId) {
+    try {
+      if (!videoId) {
+        return "Video Id is mendatory";
+      }
+      const res = await axios.post(
+        `${conf.ServerUrl}/like/toggle/v/${videoId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while toggle video like :: ", error);
       throw error;
     }
   }

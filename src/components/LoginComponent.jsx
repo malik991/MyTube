@@ -12,7 +12,9 @@ import { loginUser } from "../apiAccess/auth";
 function LoginComponent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit, control, formState } = useForm(); // control use for devTool
+  const { register, handleSubmit, formState } = useForm({
+    shouldUnregister: true,
+  }); // control use for devTool
   const [error, setError] = useState("");
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState; // hook field hookErrors
@@ -24,9 +26,20 @@ function LoginComponent() {
       // chec btn clicked and change its appearence
       setBtnClicked(true);
       const res = await loginUser(data);
-      //console.log(res);
+      console.log("data: ", res.data?.data?.user?._id);
       if (res) {
-        dispatch(authLogin(res.data));
+        const sanitizedData = {
+          // Extract only the necessary properties from res.data
+
+          id: res.data?.data?.user?._id,
+          userName: res.data?.data?.user?.userName,
+          email: res.data?.data?.user?.email,
+          fullName: res.data?.data?.user?.fullName,
+          avatar: res.data?.data?.user?.avatar,
+          coverImage: res.data?.data?.user?.coverImage,
+          // Add more properties as needed
+        };
+        dispatch(authLogin(sanitizedData));
         navigate("/my-videos");
         //}
       }
