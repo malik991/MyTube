@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { logoutUser } from "../../apiAccess/auth";
 import { useNavigate } from "react-router-dom";
+import { persistor } from "../../store/store";
 
 function LogOutBtn() {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ function LogOutBtn() {
   async function handleLogout() {
     await logoutUser();
     dispatch(logout());
+    persistor.purge(); // remove data from local storage of persisit
     navigate("/login");
   }
 

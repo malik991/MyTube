@@ -30,9 +30,7 @@ const VideoCard = ({
   const [likedBtn, setLikedBtn] = useState(false);
   const [hovered, setHovered] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
-  const { register, handleSubmit, formState } = useForm({
-    shouldUnregister: true,
-  });
+  const { register, handleSubmit, formState } = useForm({}); //shouldUnregister: true,
   const { errors: hookErrors } = formState;
   useEffect(() => {
     const fetchData = async () => {

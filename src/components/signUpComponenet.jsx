@@ -10,9 +10,7 @@ import { InputField, Button, Logo, ImageUploadField } from "./index";
 function SignUpComponenet() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit, control, formState } = useForm({
-    shouldUnregister: true,
-  });
+  const { register, handleSubmit, control, formState } = useForm({}); //shouldUnregister: true,
   const [error, setError] = useState();
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState; // hook field hookErrors

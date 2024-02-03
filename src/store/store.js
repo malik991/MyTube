@@ -1,7 +1,16 @@
 //import { combineReducers } from "redux";
 import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import authSlice from "./authSlice";
-import { persistReducer, persistStore } from "redux-persist";
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 
 // Combine multiple slices into a rootReducer
@@ -23,7 +32,9 @@ const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Set to true during development to check non-serialized action
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      }, // Set to true during development to check non-serialized action
     }),
 });
 

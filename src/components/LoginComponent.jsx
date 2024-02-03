@@ -12,9 +12,7 @@ import { loginUser } from "../apiAccess/auth";
 function LoginComponent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState } = useForm({
-    shouldUnregister: true,
-  }); // control use for devTool
+  const { register, handleSubmit, formState } = useForm({}); // control use for devTool
   const [error, setError] = useState("");
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState; // hook field hookErrors
