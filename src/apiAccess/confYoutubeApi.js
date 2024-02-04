@@ -25,8 +25,8 @@ export class DBServices {
   async uploadVideo({ videoFile, thumbNail, title, description }) {
     try {
       const formData = new FormData();
-      formData.append("videoFile", videoFile);
-      formData.append("thumbNail", thumbNail);
+      formData.append("videoFile", videoFile[0]);
+      formData.append("thumbNail", thumbNail[0]);
       formData.append("title", title);
       formData.append("description", description);
       const res = await axios.post(
@@ -36,6 +36,7 @@ export class DBServices {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
       return res;
@@ -117,24 +118,36 @@ export class DBServices {
   async deleteVideo(videoId) {
     try {
       const res = await axios.delete(
-        `${conf.ServerUrl}/videos/delete-video/${videoId}`
+        `${conf.ServerUrl}/videos/delete-video/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
       );
       return res;
     } catch (error) {
       console.error("Error in delete video :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   //get video by id and increase the views
   async getVideoById(videoId) {
     try {
       const res = await axios.get(
-        `${conf.ServerUrl}/videos/get-video/${videoId}`
+        `${conf.ServerUrl}/videos/get-video/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
       );
       return res;
     } catch (error) {
       console.error("Error in get video by id :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
 
@@ -291,23 +304,25 @@ export class DBServices {
   }
 
   // get all comments by video id
-  async getCommentsByVideoId(videoId) {
+  async getCommentsByVideoId(videoId, page = 1) {
     try {
       if (!videoId) {
         return "Video Id is mendatory";
       }
-      const res = await axios.get(
-        `${conf.ServerUrl}/comment/get-comments/${videoId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      let url = `${conf.ServerUrl}/comment/get-comments/${videoId}`;
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+      });
+      url += `?${queryParams.toString()}`;
+      const res = await axios.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       return res;
     } catch (error) {
-      console.error("Error in getting single playlist by id :: ", error);
+      console.error("Error in getting video comments :: ", error);
       throw error;
     }
   }

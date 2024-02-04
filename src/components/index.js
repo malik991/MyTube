@@ -11,6 +11,7 @@ import SignUpComponenet from "./signUpComponenet";
 import ImageUploadField from "./ImageUploadField";
 import { MyVideoComponent } from "./MyVideoComponent";
 import ProtectedLayout from "./ProtectedLayout";
+import UploadVideoComponent from "./UploadVideoComponent";
 
 export {
   Logo,
@@ -26,4 +27,5 @@ export {
   ImageUploadField,
   MyVideoComponent,
   ProtectedLayout,
+  UploadVideoComponent,
 };

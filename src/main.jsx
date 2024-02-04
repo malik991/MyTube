@@ -16,6 +16,8 @@ import SignUp from "./pages/SignUp.jsx";
 import MyVideos from "./pages/MyVideos.jsx";
 import { store, persistor } from "./store/store.js";
 import { Provider } from "react-redux";
+import { UploadVideo } from "./pages/UploadVideo.jsx";
+import EditVideo from "./pages/EditVideo.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +44,22 @@ const router = createBrowserRouter(
         element={
           <ProtectedLayout authentication>
             <MyVideos />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/upload-video"
+        element={
+          <ProtectedLayout authentication>
+            <UploadVideo />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/upload-video/:videoId"
+        element={
+          <ProtectedLayout authentication>
+            <EditVideo />
           </ProtectedLayout>
         }
       />

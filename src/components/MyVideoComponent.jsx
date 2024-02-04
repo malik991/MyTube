@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { VideoCard, Container, Button } from "../components";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export const MyVideoComponent = () => {
   const [getVideos, setVideos] = useState([]);
@@ -9,6 +11,7 @@ export const MyVideoComponent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [btnClicked, setBtnClicked] = useState(false);
+  const userData = useSelector((state) => state.auth.userData);
 
   useEffect(() => {
     fetchData(currentPage);
@@ -53,9 +56,13 @@ export const MyVideoComponent = () => {
           <div className="flex flex-wrap">
             <div className="p-2 w-full">
               <h1 className="text-2xl font-bold hover:text-gray-500">
-                User do not have any video, pleas Upload ..
+                <span style={{ color: "Red" }}>"{userData.userName}"</span>, You
+                do not have any video, pleas Upload ..
               </h1>
-              <Button>upload</Button>
+              <br />
+              <Link to="/upload-video">
+                <Button>upload</Button>
+              </Link>
             </div>
           </div>
         </Container>
@@ -75,6 +82,7 @@ export const MyVideoComponent = () => {
                   Comments={video.totalComments}
                   Likes={video.totalLikes}
                   videoId={video._id}
+                  owner={video.owner._id}
                   isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
                   setExpandedVideo={setExpandedVideo}
                 />

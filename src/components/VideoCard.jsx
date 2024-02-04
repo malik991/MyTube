@@ -9,6 +9,8 @@ import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { useSelector } from "react-redux";
 import { InputField, Button } from "../components";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const VideoCard = ({
   thumbnail,
@@ -19,36 +21,64 @@ const VideoCard = ({
   Comments,
   Likes,
   videoId,
+  owner,
   isExpanded,
   setExpandedVideo,
 }) => {
   const videoRef = useRef(null);
   const [videoComments, setVideoComments] = useState([]);
   const [userComment, setUserComment] = useState("");
+  const [totalComment, setTotalComment] = useState("");
   const [videoLikes, setVideoLikes] = useState(0);
   const [btnClicked, setBtnClicked] = useState(false);
+  const [pageBtnClicked, setPageBtnClicked] = useState(false);
   const [likedBtn, setLikedBtn] = useState(false);
+  const [deleteBtn, setDeleteBtn] = useState(false);
   const [hovered, setHovered] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
+  const userData = useSelector((state) => state.auth.userData);
   const { register, handleSubmit, formState } = useForm({}); //shouldUnregister: true,
   const { errors: hookErrors } = formState;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate();
+
+  // check the owner and logged in user
+  let isOwnerMatched = false;
+  if (owner) {
+    isOwnerMatched = owner === userData?.id;
+  }
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = async (page) => {
       try {
         if (videoId) {
-          const commentsData = await dbServiceObj.getCommentsByVideoId(videoId);
+          const commentsData = await dbServiceObj.getCommentsByVideoId(
+            videoId,
+            page
+          );
           const likesData = await dbServiceObj.getLikesByVideoId(videoId);
           //console.log("total like", likesData?.data?.data[0]?.totalLikes);
           setVideoComments(commentsData?.data?.data.docs || []);
           setVideoLikes(likesData?.data?.data[0]?.totalLikes || 0);
+          const { totalDocs, totalPages } = commentsData.data.data;
+          setTotalPages(totalPages);
+          setTotalComment(totalDocs);
         }
       } catch (error) {
         console.log("Error in Video Card.jsx useEffect:: ", error);
       }
     };
 
-    fetchData(); // Call the fetchData function when the component mounts
-  }, [videoId, btnClicked, likedBtn]);
+    fetchData(currentPage); // Call the fetchData function when the component mounts
+  }, [videoId, btnClicked, likedBtn, currentPage, deleteBtn]);
+
+  // page btn clicked
+  const handlePageChange = (newPage) => {
+    setPageBtnClicked(true);
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
   const handleVideoClick = async (e) => {
     if (
       e.target.tagName.toLowerCase() === "input" ||
@@ -56,6 +86,7 @@ const VideoCard = ({
       isExpanded
     ) {
       // If the click happened inside an input or button, do nothing
+      console.log("btn clicked");
       return;
     }
     try {
@@ -138,12 +169,37 @@ const VideoCard = ({
     // and update the like count
   };
 
+  const handleDeleteVideo = async (e) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this video?"
+    );
+    if (confirmDelete) {
+      // User clicked OK, proceed with deletion
+      setDeleteBtn(true);
+      try {
+        console.log("delete called", videoId);
+        if (videoId) {
+          await dbServiceObj.deleteVideo(videoId);
+          navigate("/");
+        }
+      } catch (error) {
+        console.log("error deleting video from VideoCard: ", error);
+      } finally {
+        // Reset deleteBtn state after completion
+        setDeleteBtn(false);
+      }
+    } else {
+      // User clicked Cancel, do nothing
+      console.log("Deletion cancelled");
+    }
+  };
+
   return (
     <div
       ref={videoRef}
       className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
     >
-      <div className="p-2">
+      <div className="py-2">
         <span className="text-black">
           {!isExpanded && `Video title: ${title}`}
         </span>
@@ -165,7 +221,7 @@ const VideoCard = ({
                     {videoLikes} <ThumbUpOffAltIcon />
                   </span>
                   <span className="ml-2">
-                    {videoComments.length} <CommentIcon />
+                    {totalComment} <CommentIcon />
                   </span>
                   <span className="ml-2">
                     <VisibilityIcon /> {views}
@@ -194,15 +250,34 @@ const VideoCard = ({
                     {comment.content}
                   </div>
                 ))}
+                {totalPages > 1 && (
+                  <div className="flex justify-center mt-4">
+                    <Button
+                      className={`px-4 py-2 mx-2 ${
+                        pageBtnClicked && currentPage !== 1
+                          ? "bg-red-600 text-white text-lg"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
+                      }`}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      {`<-`}
+                    </Button>
+                    <Button
+                      className={`px-4 py-2 mx-2 ${
+                        currentPage === totalPages
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
+                          : "bg-blue-600 text-white text-lg"
+                      }`}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      {`>`}
+                    </Button>
+                  </div>
+                )}
               </div>
               <div>
-                {/* <input
-                  type="text"
-                  value={userComment}
-                  onChange={handleCommentChange}
-                  placeholder="Enter your comment"
-                />
-                <button onClick={handleCommentSubmit}>Submit Comment</button> */}
                 <form
                   className="mt-8"
                   onSubmit={handleSubmit(handleCommentSubmit)}
@@ -257,6 +332,24 @@ const VideoCard = ({
           </>
         )}
       </div>
+      {!isExpanded && isOwnerMatched && (
+        <div className="py-2">
+          <span>
+            <Link to={`/upload-video/${videoId}`}>
+              <Button className="bg-green-500">Edit</Button>
+            </Link>
+          </span>
+          <span className="ml-2">
+            <Button
+              onClick={handleDeleteVideo}
+              disabled={deleteBtn}
+              className="bg-red-600"
+            >
+              {deleteBtn ? "Wait.." : "Delete"}
+            </Button>
+          </span>
+        </div>
+      )}
     </div>
   );
 };
