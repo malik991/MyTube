@@ -34,6 +34,8 @@ const VideoCard = ({
   const [pageBtnClicked, setPageBtnClicked] = useState(false);
   const [likedBtn, setLikedBtn] = useState(false);
   const [deleteBtn, setDeleteBtn] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState(false);
+
   const [hovered, setHovered] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
@@ -49,28 +51,27 @@ const VideoCard = ({
     isOwnerMatched = owner === userData?.id;
   }
   useEffect(() => {
-    const fetchData = async (page) => {
-      try {
-        if (videoId) {
-          const commentsData = await dbServiceObj.getCommentsByVideoId(
-            videoId,
-            page
-          );
-          const likesData = await dbServiceObj.getLikesByVideoId(videoId);
-          //console.log("total like", likesData?.data?.data[0]?.totalLikes);
-          setVideoComments(commentsData?.data?.data.docs || []);
-          setVideoLikes(likesData?.data?.data[0]?.totalLikes || 0);
-          const { totalDocs, totalPages } = commentsData.data.data;
-          setTotalPages(totalPages);
-          setTotalComment(totalDocs);
-        }
-      } catch (error) {
-        console.log("Error in Video Card.jsx useEffect:: ", error);
-      }
-    };
-
     fetchData(currentPage); // Call the fetchData function when the component mounts
-  }, [videoId, btnClicked, likedBtn, currentPage, deleteBtn]);
+  }, [videoId, btnClicked, likedBtn, currentPage, deleteStatus]);
+  const fetchData = async (page) => {
+    try {
+      if (videoId) {
+        const commentsData = await dbServiceObj.getCommentsByVideoId(
+          videoId,
+          page
+        );
+        const likesData = await dbServiceObj.getLikesByVideoId(videoId);
+        //console.log("total like", likesData?.data?.data[0]?.totalLikes);
+        setVideoComments(commentsData?.data?.data.docs || []);
+        setVideoLikes(likesData?.data?.data[0]?.totalLikes || 0);
+        const { totalDocs, totalPages } = commentsData.data.data;
+        setTotalPages(totalPages);
+        setTotalComment(totalDocs);
+      }
+    } catch (error) {
+      console.log("Error in Video Card.jsx useEffect:: ", error);
+    }
+  };
 
   // page btn clicked
   const handlePageChange = (newPage) => {
@@ -177,16 +178,17 @@ const VideoCard = ({
       // User clicked OK, proceed with deletion
       setDeleteBtn(true);
       try {
-        console.log("delete called", videoId);
+        //console.log("delete called", videoId);
         if (videoId) {
           await dbServiceObj.deleteVideo(videoId);
-          navigate("/");
         }
+        setDeleteBtn(false);
+        setDeleteStatus(true);
+        navigate("/");
       } catch (error) {
         console.log("error deleting video from VideoCard: ", error);
-      } finally {
-        // Reset deleteBtn state after completion
         setDeleteBtn(false);
+        setDeleteStatus(false);
       }
     } else {
       // User clicked Cancel, do nothing

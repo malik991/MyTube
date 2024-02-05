@@ -14,6 +14,7 @@ export class DBServices {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
       return res;
@@ -48,7 +49,7 @@ export class DBServices {
   async updateThumbnail({ thumbNail }, videoId) {
     try {
       const formData = new FormData();
-      formData.append("thumbNail", thumbNail);
+      formData.append("thumbNail", thumbNail[0]);
 
       const res = await axios.patch(
         `${conf.ServerUrl}/videos/update-thumbnail/${videoId}`,
@@ -57,6 +58,7 @@ export class DBServices {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
       return res;

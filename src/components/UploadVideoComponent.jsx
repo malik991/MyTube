@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
@@ -17,16 +17,39 @@ const UploadVideoComponent = ({ initialData }) => {
     },
   });
   const navigate = useNavigate();
-
+  const [btnClicked, setBtnClicked] = useState(false);
   const onSubmit = async (data) => {
     if (initialData) {
-      console.log("initial data present: ", initialData.thumbNail);
-    } else {
-      console.log("when new video upload: ", data);
       try {
+        const videoId = initialData?._id;
+        setBtnClicked(true);
+        if (videoId) {
+          const sendData = {
+            title: data?.title || initialData?.title,
+            description: data?.description || initialData?.description,
+            thumbNail: data?.thumbNail || initialData?.thumbNail,
+          };
+          console.log("initial data present: ", sendData, initialData?._id);
+          const [resThumbNail, resTitle] = await Promise.all([
+            dbServiceObj.updateThumbnail(sendData, videoId),
+            dbServiceObj.updateTitleDesc(sendData, videoId),
+          ]);
+          setBtnClicked(false);
+          navigate("/my-videos");
+        } else {
+          setBtnClicked(false);
+          console.log("video id not found");
+        }
+      } catch (error) {
+        console.log("error in edit video, ", error);
+        setBtnClicked(false);
+      }
+    } else {
+      try {
+        setBtnClicked(true);
         const res = await dbServiceObj.uploadVideo(data);
         if (res?.data?.data) {
-          console.log("new video upload: ", res.data);
+          //console.log("new video upload: ", res.data);
           navigate("/my-videos");
         }
       } catch (error) {
@@ -129,8 +152,9 @@ const UploadVideoComponent = ({ initialData }) => {
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          disabled={btnClicked}
         >
-          {initialData ? "Update" : "Upload"}
+          {btnClicked ? "Wait..." : initialData ? "Update" : "Upload"}
         </button>
       </div>
     </form>
