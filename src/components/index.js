@@ -12,6 +12,7 @@ import ImageUploadField from "./ImageUploadField";
 import { MyVideoComponent } from "./MyVideoComponent";
 import ProtectedLayout from "./ProtectedLayout";
 import UploadVideoComponent from "./UploadVideoComponent";
+import DashBoardComponent from "./DashBoardComponent";
 
 export {
   Logo,
@@ -28,4 +29,5 @@ export {
   MyVideoComponent,
   ProtectedLayout,
   UploadVideoComponent,
+  DashBoardComponent,
 };

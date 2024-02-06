@@ -33,6 +33,11 @@ function Header() {
       slug: "/upload-video",
       active: authStatus,
     },
+    {
+      name: "DashBoard",
+      slug: "/dashboard",
+      active: authStatus,
+    },
   ];
   return (
     <header className="py-3 shadow-xl ring-inherit bg-[#F3F3F3] rounded-lg mx-2 mt-2">

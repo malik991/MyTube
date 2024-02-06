@@ -18,6 +18,7 @@ import { store, persistor } from "./store/store.js";
 import { Provider } from "react-redux";
 import { UploadVideo } from "./pages/UploadVideo.jsx";
 import EditVideo from "./pages/EditVideo.jsx";
+import DashBoard from "./pages/DashBoard.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -60,6 +61,14 @@ const router = createBrowserRouter(
         element={
           <ProtectedLayout authentication>
             <EditVideo />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedLayout authentication>
+            <DashBoard />
           </ProtectedLayout>
         }
       />
