@@ -40,27 +40,28 @@ const router = createBrowserRouter(
           </ProtectedLayout>
         }
       />
-      <Route
+      {/* <Route
         path="/my-videos"
         element={
           <ProtectedLayout authentication>
             <MyVideos />
           </ProtectedLayout>
         }
-      />
-      <Route
-        path="/upload-video"
-        element={
-          <ProtectedLayout authentication>
-            <UploadVideo />
-          </ProtectedLayout>
-        }
-      />
+      /> */}
+
       <Route
         path="/upload-video/:videoId"
         element={
           <ProtectedLayout authentication>
             <EditVideo />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="upload-video"
+        element={
+          <ProtectedLayout authentication>
+            <UploadVideo />
           </ProtectedLayout>
         }
       />
@@ -71,7 +72,24 @@ const router = createBrowserRouter(
             <DashBoard />
           </ProtectedLayout>
         }
-      />
+      >
+        <Route
+          path="my-videos"
+          element={
+            <ProtectedLayout authentication>
+              <MyVideos />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="upload-video"
+          element={
+            <ProtectedLayout authentication>
+              <UploadVideo />
+            </ProtectedLayout>
+          }
+        />
+      </Route>
     </Route>
   )
 );

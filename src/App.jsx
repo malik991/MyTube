@@ -2,10 +2,13 @@ import conf from "./config/viteConfiguration";
 import { useState, useEffect } from "react";
 import "./App.css";
 //import dbServiceObj from "./apiAccess/confYoutubeApi";
-import { Header, Footer } from "./components/index";
+import { Header, Footer, SidePanel } from "./components/index";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function App() {
+  const isAuthenticated = useSelector((state) => state.auth.state);
+  //const location = useLocation();
   //useEffect(() => {}, []);
 
   return (
@@ -13,8 +16,8 @@ function App() {
       <div className="w-full block">
         <Header />
         <main className="my-2">
-          {" "}
-          <Outlet />{" "}
+          {isAuthenticated && <SidePanel />}
+          <Outlet />
         </main>
         <Footer />
       </div>

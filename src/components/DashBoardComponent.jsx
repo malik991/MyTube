@@ -3,6 +3,7 @@ import SidePanel from "./SidePanel";
 import { Container } from "../components";
 import { useSelector } from "react-redux";
 import { dashBoardData } from "../apiAccess/dashBoardApi";
+import { Outlet, useLocation } from "react-router-dom";
 import {
   Chart as chartjs,
   BarElement,
@@ -28,6 +29,7 @@ const DashBoardComponent = () => {
   const [totalLikes, setTotalLikes] = useState(0);
 
   const userData = useSelector((state) => state.auth.userData);
+  const location = useLocation();
 
   useEffect(() => {
     fetchData();
@@ -75,32 +77,37 @@ const DashBoardComponent = () => {
           {" "}
           Hello {userData?.userName}
         </h1>
-        <div className="py-4">
-          <Bar
-            data={barChartData}
-            options={{
-              scales: {
-                y: { beginAtZero: true },
-              },
-            }}
-          ></Bar>
-        </div>
-        <div className="py-2">
-          <h2>
-            Total Videos:{" "}
-            <span className="text-red-500 text-xl font-semibold">
-              {totalVideos}
-            </span>{" "}
-          </h2>
-          <h2>
-            Total Views:{" "}
-            <span className="text-red-500 text-xl font-semibold">
-              {totalVideoViews}
-            </span>
-          </h2>
-          <h2>Total Subscribers: {totalSubscribers}</h2>
-          <h2>Total Likes: {totalLikes}</h2>
-        </div>
+        {location.pathname === "/dashboard" && (
+          <>
+            <div className="py-4">
+              <Bar
+                data={barChartData}
+                options={{
+                  scales: {
+                    y: { beginAtZero: true },
+                  },
+                }}
+              ></Bar>
+            </div>
+            <div className="py-2">
+              <h2>
+                Total Videos:{" "}
+                <span className="text-red-500 text-xl font-semibold">
+                  {totalVideos}
+                </span>{" "}
+              </h2>
+              <h2>
+                Total Views:{" "}
+                <span className="text-red-500 text-xl font-semibold">
+                  {totalVideoViews}
+                </span>
+              </h2>
+              <h2>Total Subscribers: {totalSubscribers}</h2>
+              <h2>Total Likes: {totalLikes}</h2>
+            </div>
+          </>
+        )}
+        <Outlet />
       </div>
     </div>
   );

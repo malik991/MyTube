@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Logo, Container, LogOutBtn, MyVideoComponent } from "../index.js";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Avatar } from "@mui/material";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
+  const [avatar, setAvatar] = useState();
+
+  useEffect(() => {
+    if (userData?.avatar) {
+      setAvatar(userData.avatar);
+    }
+  }, [avatar]);
 
   const navItems = [
     {
@@ -23,11 +31,11 @@ function Header() {
       slug: "/signup",
       active: !authStatus,
     },
-    {
-      name: "My videos",
-      slug: "/my-videos",
-      active: authStatus,
-    },
+    // {
+    //   name: "My videos",
+    //   slug: "/my-videos",
+    //   active: authStatus,
+    // },
     {
       name: "Upload Video",
       slug: "/upload-video",
@@ -66,8 +74,10 @@ function Header() {
               ) : null
             )}
             {authStatus && (
-              <li>
-                <LogOutBtn />
+              <li className="ml-2 text-lg">
+                {avatar && (
+                  <Avatar src={avatar} sx={{ width: 30, height: 30 }} />
+                )}
               </li>
             )}
           </ul>

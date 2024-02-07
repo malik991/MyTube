@@ -13,6 +13,7 @@ import { MyVideoComponent } from "./MyVideoComponent";
 import ProtectedLayout from "./ProtectedLayout";
 import UploadVideoComponent from "./UploadVideoComponent";
 import DashBoardComponent from "./DashBoardComponent";
+import SidePanel from "./SidePanel";
 
 export {
   Logo,
@@ -30,4 +31,5 @@ export {
   ProtectedLayout,
   UploadVideoComponent,
   DashBoardComponent,
+  SidePanel,
 };
