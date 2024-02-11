@@ -19,6 +19,7 @@ import { Provider } from "react-redux";
 import { UploadVideo } from "./pages/UploadVideo.jsx";
 import EditVideo from "./pages/EditVideo.jsx";
 import DashBoard from "./pages/DashBoard.jsx";
+import Profile from "./pages/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,14 +41,14 @@ const router = createBrowserRouter(
           </ProtectedLayout>
         }
       />
-      {/* <Route
-        path="/my-videos"
+      <Route
+        path="/profile"
         element={
           <ProtectedLayout authentication>
-            <MyVideos />
+            <Profile />
           </ProtectedLayout>
         }
-      /> */}
+      />
 
       <Route
         path="/upload-video/:videoId"

@@ -40,12 +40,16 @@ const ImageUploadField = React.forwardRef(function Input(
           type={type}
           ref={(e) => {
             if (ref) {
+              //console.log("ref have some value");
               if (typeof ref === "function") {
                 ref(e);
+                //console.log("ref is function", ref);
               } else {
+                //console.log("ref is object");
                 ref.current = e;
               }
             }
+
             fileInputRef.current = e; // Assign file input ref
           }}
           style={{ display: "none" }}

@@ -22,7 +22,7 @@ function SignUpComponenet() {
     } else {
       alert("avater not uloaded");
     }
-    // console.log("avatar", data?.avatar, "coverImage: ", data.coverImage[0]);
+    // console.log("data ", data);
 
     setError("");
     try {
@@ -206,6 +206,7 @@ function SignUpComponenet() {
               })}
               onChange={(file) => setAvatar(file)}
             />
+
             {hookErrors.profilePicture?.message && (
               <p className="text-red-600 text-left mt-0 mb-0">
                 {hookErrors.profilePicture.message}

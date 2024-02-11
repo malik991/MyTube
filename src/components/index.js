@@ -14,6 +14,7 @@ import ProtectedLayout from "./ProtectedLayout";
 import UploadVideoComponent from "./UploadVideoComponent";
 import DashBoardComponent from "./DashBoardComponent";
 import SidePanel from "./SidePanel";
+import CustomDropdown from "./CustomDropdown";
 
 export {
   Logo,
@@ -32,4 +33,5 @@ export {
   UploadVideoComponent,
   DashBoardComponent,
   SidePanel,
+  CustomDropdown,
 };
