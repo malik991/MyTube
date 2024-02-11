@@ -2,11 +2,12 @@ import conf from "../config/viteConfiguration";
 import axios from "axios";
 
 export class DBServices {
-  async updateTitleDesc({ title, description }, videoId) {
+  async updateTitleDesc({ title, description, isPublished }, videoId) {
     try {
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
+      formData.append("isPublished", isPublished);
       const res = await axios.patch(
         `${conf.ServerUrl}/videos/update-title-description/${videoId}`,
         formData,
@@ -23,13 +24,15 @@ export class DBServices {
       throw error?.message;
     }
   }
-  async uploadVideo({ videoFile, thumbNail, title, description }) {
+  async uploadVideo({ videoFile, thumbNail, title, description, isPublished }) {
     try {
       const formData = new FormData();
       formData.append("videoFile", videoFile[0]);
       formData.append("thumbNail", thumbNail[0]);
       formData.append("title", title);
       formData.append("description", description);
+      formData.append("isPublished", isPublished);
+
       const res = await axios.post(
         `${conf.ServerUrl}/videos/upload-video`,
         formData,

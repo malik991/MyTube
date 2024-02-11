@@ -35,7 +35,7 @@ export const registerUser = async ({
     formData.append("email", email);
     formData.append("password", password);
     formData.append("fullName", fullName);
-    formData.append("avatar", avatar[0]);
+    formData.append("avatar", avatar);
     formData.append("coverImage", coverImage[0]);
     // console.log("formData entries:");
     // for (var pair of formData.entries()) {
@@ -45,6 +45,7 @@ export const registerUser = async ({
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      withCredentials: true,
     });
     if (res.status >= 200 && res.status < 300) {
       return res; // Assuming your API returns the user data upon successful registration

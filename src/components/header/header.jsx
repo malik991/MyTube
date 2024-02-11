@@ -7,13 +7,13 @@ import { Avatar } from "@mui/material";
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
-  const [avatar, setAvatar] = useState();
+  const [avatar, setAvatar] = useState(userData?.avatar);
 
   useEffect(() => {
     if (userData?.avatar) {
       setAvatar(userData.avatar);
     }
-  }, [avatar]);
+  }, [userData]);
 
   const navItems = [
     {

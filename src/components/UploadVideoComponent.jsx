@@ -14,6 +14,7 @@ const UploadVideoComponent = ({ initialData }) => {
       title: initialData?.title || "",
       description: initialData?.description || "",
       thumbNail: initialData?.thumbNail || "",
+      isPublished: initialData?.isPublished || false,
       videoFile: null,
     },
   });
@@ -31,6 +32,10 @@ const UploadVideoComponent = ({ initialData }) => {
             title: data?.title || initialData?.title,
             description: data?.description || initialData?.description,
             thumbNail: data?.thumbNail || initialData?.thumbNail,
+            isPublished:
+              data?.isPublished !== undefined
+                ? data.isPublished
+                : initialData?.isPublished || false,
           };
           let checkCloudinary;
 
@@ -81,12 +86,14 @@ const UploadVideoComponent = ({ initialData }) => {
         }
         setBtnClicked(false);
       }
-    } else {
+    }
+    /// for upload new video
+    else {
       try {
         setBtnClicked(true);
+        console.log("new video upload: ", data);
         const res = await dbServiceObj.uploadVideo(data);
         if (res?.data?.data) {
-          //console.log("new video upload: ", res.data);
           navigate("/dashboard/my-videos");
         }
       } catch (error) {
@@ -157,6 +164,16 @@ const UploadVideoComponent = ({ initialData }) => {
               {errors.description && (
                 <p className="text-red-500">{errors.description.message}</p>
               )}
+            </div>
+            <div className="mb-4">
+              <InputField
+                label="isPublished"
+                type="switch"
+                id="isPublished"
+                {...register("isPublished")}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                checked={initialData ? initialData?.isPublished : false}
+              />
             </div>
 
             {/* ... (similar blocks for description and videoName) */}

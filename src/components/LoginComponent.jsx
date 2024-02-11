@@ -24,7 +24,7 @@ function LoginComponent() {
       // chec btn clicked and change its appearence
       setBtnClicked(true);
       const res = await loginUser(data);
-      console.log("data: ", res.data?.data?.user?._id);
+      //console.log("data: ", res.data?.data?.user?._id);
       if (res) {
         const sanitizedData = {
           // Extract only the necessary properties from res.data
@@ -40,6 +40,8 @@ function LoginComponent() {
         dispatch(authLogin(sanitizedData));
         navigate("/my-videos");
         //}
+      } else {
+        alert("login failed, please try again");
       }
     } catch (error) {
       console.log("error in login componenet: ", error);

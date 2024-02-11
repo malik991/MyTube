@@ -14,29 +14,37 @@ function SignUpComponenet() {
   const [error, setError] = useState();
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState; // hook field hookErrors
+  const [avatar, setAvatar] = useState(null);
 
   async function signUp(data) {
-    console.log("data", data);
-    ////////////////////////////////////////////////////////
+    if (avatar) {
+      data.avatar = avatar;
+    } else {
+      alert("avater not uloaded");
+    }
+    // console.log("avatar", data?.avatar, "coverImage: ", data.coverImage[0]);
+
     setError("");
     try {
       setBtnClicked(true);
       const res = await registerUser(data);
       //console.log("res, : ", res);
       if (res) {
-        const sanitizedData = {
-          // Extract only the necessary properties from res.data
+        // const sanitizedData = {
+        //   // Extract only the necessary properties from res.data
 
-          id: res.data?.data?.user?._id,
-          userName: res.data?.data?.user?.userName,
-          email: res.data?.data?.user?.email,
-          fullName: res.data?.data?.user?.fullName,
-          avatar: res.data?.data?.user?.avatar,
-          coverImage: res.data?.data?.user?.coverImage,
-          // Add more properties as needed
-        };
-        dispatch(authLogin(sanitizedData));
+        //   id: res.data?.data?.user?._id,
+        //   userName: res.data?.data?.user?.userName,
+        //   email: res.data?.data?.user?.email,
+        //   fullName: res.data?.data?.user?.fullName,
+        //   avatar: res.data?.data?.user?.avatar,
+        //   coverImage: res.data?.data?.user?.coverImage,
+        //   // Add more properties as needed
+        // };
+        //dispatch(authLogin(sanitizedData));
         navigate("/login");
+      } else {
+        alert("signup failed, please try again");
       }
     } catch (error) {
       console.log("error in signup component: ", error);
@@ -116,7 +124,7 @@ function SignUpComponenet() {
               label="E-mail:"
               placeholder="Enter your Email !"
               type="email"
-              //id="email"
+              id="email"
               {...register("email", {
                 pattern: {
                   value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -151,11 +159,11 @@ function SignUpComponenet() {
                   value: true,
                   message: "Password is mendatory",
                 },
-                // pattern: {
-                //   value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{5,}$/,
-                //   message:
-                //     "min 5 chracters, 1 uppercase and 1 digit i.e Masdfgq12",
-                // },
+                pattern: {
+                  value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/,
+                  message:
+                    "min 6 chracters, 1 uppercase and 1 digit i.e Masd3a",
+                },
               })}
             />
             {hookErrors.password?.message && (
@@ -166,7 +174,8 @@ function SignUpComponenet() {
             <InputField
               label="fullName"
               placeholder="enter fullName"
-              type="fullName"
+              type="text"
+              id="fullName"
               {...register("fullName", {
                 // pattern: {
                 //   value: /^[a-zA-Z0-9]+$/,
@@ -184,29 +193,31 @@ function SignUpComponenet() {
               </p>
             )}
 
-            <InputField
-              label="Avatar"
+            <ImageUploadField
+              label="Profile Picture"
               type="file"
-              {...register("avatar", {
+              name="profilePicture"
+              id="profilePicture"
+              {...register("profilePicture", {
                 required: {
                   value: true,
-                  message: "avatar required",
+                  message: "Avatar required",
                 },
               })}
+              onChange={(file) => setAvatar(file)}
             />
-            {hookErrors.avatar?.message && (
+            {hookErrors.profilePicture?.message && (
               <p className="text-red-600 text-left mt-0 mb-0">
-                {hookErrors.avatar.message}
+                {hookErrors.profilePicture.message}
               </p>
             )}
             <InputField
               label="cover Image"
               type="file"
+              id="coverImage"
               {...register("coverImage")}
             />
-            {/* <input type="file" {...register("profilePicture")} /> */}
 
-            <ImageUploadField register={register} />
             <Button
               type="submit"
               className={`w-full ${

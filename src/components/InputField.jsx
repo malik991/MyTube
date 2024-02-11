@@ -1,10 +1,12 @@
 import React, { useId } from "react";
+import Switch from "@mui/material/Switch";
 
 const InputField = React.forwardRef(function Input(
-  { label, type = "text", className = "", onChange, ...props },
-  ref // this is the thing which provide us reference
+  { label, type = "text", className = "", checked, onChange, ...props },
+  ref // ref will be automatically provided by react-hook-form
 ) {
   const id = useId();
+
   return (
     <div className="w-full text-left">
       {label && (
@@ -23,6 +25,14 @@ const InputField = React.forwardRef(function Input(
           onChange={onChange}
           {...props}
           id={props.id || id}
+        />
+      ) : type === "switch" ? (
+        <Switch
+          inputRef={ref}
+          onChange={onChange}
+          id={props.id || id}
+          defaultChecked={checked}
+          {...props}
         />
       ) : (
         <input
