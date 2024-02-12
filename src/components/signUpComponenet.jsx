@@ -177,10 +177,6 @@ function SignUpComponenet() {
               type="text"
               id="fullName"
               {...register("fullName", {
-                // pattern: {
-                //   value: /^[a-zA-Z0-9]+$/,
-                //   message: "Invalid userName formate, [a-z,0-9]",
-                // },
                 required: {
                   value: true,
                   message: "fullName required",

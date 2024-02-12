@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, UploadVideoComponent } from "../components";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 
 const EditVideo = () => {
   const [load, setLoad] = useState(null);
   const { videoId } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchVideoData = async () => {

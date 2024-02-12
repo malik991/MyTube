@@ -15,6 +15,7 @@ import UploadVideoComponent from "./UploadVideoComponent";
 import DashBoardComponent from "./DashBoardComponent";
 import SidePanel from "./SidePanel";
 import CustomDropdown from "./CustomDropdown";
+import ProfileComponenet from "./ProfileComponenet";
 
 export {
   Logo,
@@ -34,4 +35,5 @@ export {
   DashBoardComponent,
   SidePanel,
   CustomDropdown,
+  ProfileComponenet,
 };

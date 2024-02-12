@@ -1,20 +1,19 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Avatar, Button } from "@mui/material";
 import { ProfilePictureContainer } from "./style.js";
 
 const ImageUploadField = React.forwardRef(function Input(
-  { label, type, onChange, name, ...props },
+  { label, type, onChange, name, initialAvatar, ...props },
   ref
 ) {
   const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState();
+  const [preview, setPreview] = useState(initialAvatar);
 
   const handleUploadedFile = (event) => {
     const file = event.target.files[0];
     if (file) {
       const urlImage = URL.createObjectURL(file);
       setPreview(urlImage);
-      // Pass file to parent component
       onChange(file);
     }
   };
@@ -24,6 +23,11 @@ const ImageUploadField = React.forwardRef(function Input(
       fileInputRef.current.click();
     }
   };
+
+  useEffect(() => {
+    // Update the preview if the initialAvatar changes
+    setPreview(initialAvatar);
+  }, [initialAvatar]);
 
   return (
     <div className="w-full text-left">
@@ -40,22 +44,18 @@ const ImageUploadField = React.forwardRef(function Input(
           type={type}
           ref={(e) => {
             if (ref) {
-              //console.log("ref have some value");
               if (typeof ref === "function") {
                 ref(e);
-                //console.log("ref is function", ref);
               } else {
-                //console.log("ref is object");
                 ref.current = e;
               }
             }
-
-            fileInputRef.current = e; // Assign file input ref
+            fileInputRef.current = e;
           }}
           style={{ display: "none" }}
           onChange={(event) => handleUploadedFile(event)}
-          name={name} // Pass name for react-hook-form
-          {...props} // Pass other props to input
+          name={name}
+          {...props}
         />
         <Avatar src={preview} sx={{ width: 80, height: 80 }} />
         <Button variant="text" onClick={onUpload}>

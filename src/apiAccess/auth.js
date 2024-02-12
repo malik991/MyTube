@@ -97,62 +97,72 @@ export const getCurrentUser = async () => {
   }
 };
 // update user details
-export const updateUserDetails = async (userName, email, fullName) => {
+export const updateUserDetails = async ({ userName, email, fullName }) => {
   try {
-    const res = await axios.post(
+    console.log(userName, email, fullName);
+    const formData = new FormData();
+    formData.append("userName", userName);
+    formData.append("email", email);
+    formData.append("fullName", fullName);
+    const res = await axios.patch(
       `${conf.ServerUrl}/users/update-account-details`,
+      formData,
       {
-        userName,
-        email,
-        fullName,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
       }
     );
     return res;
   } catch (error) {
-    console.error("Error in update user details:: ", error?.message);
-    throw error?.message;
+    console.error("Error in update user details:: ", error);
+    throw error;
   }
 };
 
 // update avatar
-export const updateAvatar = async ({ avatar }) => {
+export const updateAvatar = async (avatar) => {
   try {
+    console.log("avatr: ", avatar);
     const formData = new FormData();
     formData.append("avatar", avatar);
-    const res = await axios.post(
+    const res = await axios.patch(
       `${conf.ServerUrl}/users/update-avatar`,
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     return res;
   } catch (error) {
-    console.error("Error in update user Avatar :: ", error?.message);
-    throw error?.message;
+    console.error("Error in update user Avatar :: ", error);
+    throw error;
   }
 };
 
 // update cover image
-export const updateCoverImage = async ({ coverImage }) => {
+export const updateCoverImage = async (coverImage) => {
   try {
     const formData = new FormData();
     formData.append("coverImage", coverImage);
-    const res = await axios.post(
+    const res = await axios.patch(
       `${conf.ServerUrl}/users/update-cover-image`,
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: true,
       }
     );
     return res;
   } catch (error) {
-    console.error("Error in update user coverImage :: ", error?.message);
-    throw error?.message;
+    console.error("Error in update user coverImage :: ", error);
+    throw error;
   }
 };
 
