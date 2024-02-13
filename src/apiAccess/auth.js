@@ -74,16 +74,25 @@ export const logoutUser = async () => {
   }
 };
 // change password
-export const changePassword = async (oldPassword, newPassword) => {
+export const changePassword = async ({ oldPassword, newPassword }) => {
   try {
-    const res = await axios.post(`${conf.ServerUrl}/users/change-password`, {
-      oldPassword,
-      newPassword,
-    });
+    const formData = new FormData();
+    formData.append("oldPassword", oldPassword);
+    formData.append("newPassword", newPassword);
+    const res = await axios.post(
+      `${conf.ServerUrl}/users/change-password`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
     return res;
   } catch (error) {
-    console.error("Error in change password:: ", error?.message);
-    throw error?.message;
+    console.error("Error in change password:: ", error);
+    throw error;
   }
 };
 // get current user
@@ -172,11 +181,16 @@ export const getChannelProfile = async (username) => {
     if (!username) {
       return "Invalid UserName";
     }
-    const res = await axios.get(`${conf.ServerUrl}/users/c/${username}`);
+    const res = await axios.get(`${conf.ServerUrl}/users/c/${username}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return res;
   } catch (error) {
     console.error("Error in getChannelProfile :: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 
@@ -187,12 +201,19 @@ export const addWatchHistory = async (videoId) => {
       return "Invalid videoId";
     }
     const res = await axios.post(
-      `${conf.ServerUrl}/users/add-watch-history/${videoId}`
+      `${conf.ServerUrl}/users/add-watch-history/${videoId}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
     );
     return res;
   } catch (error) {
     console.error("Error in add watch history :: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 // get watch hostory

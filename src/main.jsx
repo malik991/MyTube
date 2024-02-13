@@ -20,6 +20,7 @@ import { UploadVideo } from "./pages/UploadVideo.jsx";
 import EditVideo from "./pages/EditVideo.jsx";
 import DashBoard from "./pages/DashBoard.jsx";
 import Profile from "./pages/Profile.jsx";
+import ChangePassword from "./pages/ChangePassword.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -87,6 +88,14 @@ const router = createBrowserRouter(
           element={
             <ProtectedLayout authentication>
               <UploadVideo />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="change-password"
+          element={
+            <ProtectedLayout authentication>
+              <ChangePassword />
             </ProtectedLayout>
           }
         />

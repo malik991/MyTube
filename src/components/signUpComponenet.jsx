@@ -30,18 +30,6 @@ function SignUpComponenet() {
       const res = await registerUser(data);
       //console.log("res, : ", res);
       if (res) {
-        // const sanitizedData = {
-        //   // Extract only the necessary properties from res.data
-
-        //   id: res.data?.data?.user?._id,
-        //   userName: res.data?.data?.user?.userName,
-        //   email: res.data?.data?.user?.email,
-        //   fullName: res.data?.data?.user?.fullName,
-        //   avatar: res.data?.data?.user?.avatar,
-        //   coverImage: res.data?.data?.user?.coverImage,
-        //   // Add more properties as needed
-        // };
-        //dispatch(authLogin(sanitizedData));
         navigate("/login");
       } else {
         alert("signup failed, please try again");

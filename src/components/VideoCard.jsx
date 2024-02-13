@@ -6,6 +6,7 @@ import AvTimerIcon from "@mui/icons-material/AvTimer";
 import CommentIcon from "@mui/icons-material/Comment";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
+import { addWatchHistory } from "../apiAccess/auth";
 import { useSelector } from "react-redux";
 import { InputField, Button } from "../components";
 import { useForm } from "react-hook-form";
@@ -87,12 +88,15 @@ const VideoCard = ({
       isExpanded
     ) {
       // If the click happened inside an input or button, do nothing
-      console.log("btn clicked");
+      //console.log("btn clicked");
       return;
     }
     try {
-      console.log("view update");
+      //console.log("view update");
       const views = await dbServiceObj.getVideoViews(videoId);
+      if (authStatus) {
+        const response = await addWatchHistory(videoId);
+      }
     } catch (error) {
       console.log("error in video card while click on video for view: ", error);
     }

@@ -36,6 +36,9 @@ const SidePanel = () => {
         <li className="mb-2 p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">
           <Link to="/dashboard/upload-video">Upload Videos</Link>
         </li>
+        <li className="mb-2 p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">
+          <Link to="/dashboard/change-password">Change Password</Link>
+        </li>
       </ul>
       {/* Logout link at the bottom of the div */}
       <div className="p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">

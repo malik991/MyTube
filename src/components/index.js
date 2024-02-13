@@ -16,6 +16,7 @@ import DashBoardComponent from "./DashBoardComponent";
 import SidePanel from "./SidePanel";
 import CustomDropdown from "./CustomDropdown";
 import ProfileComponenet from "./ProfileComponenet";
+import ChangePasswordComponent from "./ChangePasswordComponent";
 
 export {
   Logo,
@@ -36,4 +37,5 @@ export {
   SidePanel,
   CustomDropdown,
   ProfileComponenet,
+  ChangePasswordComponent,
 };
