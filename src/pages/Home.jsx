@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { VideoCard, Container, Button } from "../components";
+import { getWatchHistory } from "../apiAccess/auth";
 
-function Home() {
+function Home({ isWatchHistory }) {
   const [getVideos, setVideos] = useState([]);
   const [getTotalVideos, setTotalVideos] = useState(null);
   const [expandedVideo, setExpandedVideo] = useState(null);
@@ -12,7 +13,7 @@ function Home() {
 
   useEffect(() => {
     fetchData(currentPage);
-  }, [currentPage]);
+  }, [currentPage, isWatchHistory]);
 
   const fetchData = async (page) => {
     try {
@@ -20,12 +21,9 @@ function Home() {
         //console.log("fetch data");
         setExpandedVideo(null); // to remove the expanded video from next page
       }
-      const response = await dbServiceObj.getAllVideos(
-        "title",
-        "desc",
-        null,
-        page
-      );
+      const response = isWatchHistory
+        ? await getWatchHistory(page)
+        : await dbServiceObj.getAllVideos("title", "desc", null, page);
       const { docs, totalDocs, totalPages } = response.data.data;
       // console.log(
       //   `docs: ${docs}, totalDocs: ${totalDocs}, totalPages: ${totalPages}`

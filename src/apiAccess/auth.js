@@ -217,13 +217,23 @@ export const addWatchHistory = async (videoId) => {
   }
 };
 // get watch hostory
-export const getWatchHistory = async () => {
+export const getWatchHistory = async (page = 1) => {
   try {
-    const res = await axios.get(`${conf.ServerUrl}/users/watch-history`);
+    let url = `${conf.ServerUrl}/users/watch-history`;
+    const queryParams = new URLSearchParams({
+      page: page.toString(), // Convert page to string
+    });
+    url += `?${queryParams.toString()}`;
+    const res = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return res;
   } catch (error) {
     console.error("Error in get watch history :: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 

@@ -25,7 +25,7 @@ import ChangePassword from "./pages/ChangePassword.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Home isWatchHistory={false} />} />
       <Route
         path="/login"
         element={
@@ -96,6 +96,14 @@ const router = createBrowserRouter(
           element={
             <ProtectedLayout authentication>
               <ChangePassword />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="watch-history"
+          element={
+            <ProtectedLayout authentication>
+              <Home isWatchHistory={true} />
             </ProtectedLayout>
           }
         />

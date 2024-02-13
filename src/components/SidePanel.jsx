@@ -34,6 +34,9 @@ const SidePanel = () => {
           <Link to="/dashboard/my-videos">My Videos</Link>
         </li>
         <li className="mb-2 p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">
+          <Link to="/dashboard/watch-history">Watch History</Link>
+        </li>
+        <li className="mb-2 p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">
           <Link to="/dashboard/upload-video">Upload Videos</Link>
         </li>
         <li className="mb-2 p-2 text-xl text-black font-bold font-sans border-b-2 border-cyan-200">
