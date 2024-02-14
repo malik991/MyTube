@@ -12,6 +12,15 @@ import { InputField, Button } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Typography,
+  Avatar,
+  IconButton,
+} from "@mui/material";
 
 const VideoCard = ({
   thumbnail,
@@ -20,7 +29,9 @@ const VideoCard = ({
   views,
   title,
   Comments,
-  Likes,
+  fullName,
+  ownerAvatar,
+  channelName,
   videoId,
   owner,
   isExpanded,
@@ -205,11 +216,11 @@ const VideoCard = ({
       ref={videoRef}
       className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
     >
-      <div className="py-2">
-        <span className="text-black">
-          {!isExpanded && `Video title: ${title}`}
+      {/* <div className="py-2">
+        <span className="text-black text-lg font-semibold">
+          {!isExpanded && `Video Title: ${title}`}
         </span>
-      </div>
+      </div> */}
       <div
         onClick={handleVideoClick}
         className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
@@ -315,27 +326,50 @@ const VideoCard = ({
             </div>
           </>
         ) : (
-          <>
-            <img
-              className="w-full h-40 object-cover transition duration-300 transform group-hover:scale-105"
-              src={thumbnail}
-              alt="Video Thumbnail"
-            />
-            <div className="p-2 absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white">
-              <span>
-                {duration} <AvTimerIcon />
-              </span>
-              <span className="ml-2">
-                {views} <VisibilityIcon />
-              </span>
-              <span className="ml-2">
-                {Comments} <CommentIcon />
-              </span>
-              <span className="ml-2">
-                {videoLikes} <ThumbUpOffAltIcon />
-              </span>
-            </div>
-          </>
+          <Card>
+            <CardContent className="">
+              <Typography
+                variant="subtitle1"
+                color="textPrimary"
+                component="div"
+              >
+                <h2 className="text-black text-lg font-semibold from-stone-100 font-serif">
+                  Title: {title}
+                </h2>
+              </Typography>
+            </CardContent>
+            <CardActionArea>
+              <CardMedia
+                className="w-full h-60 object-cover"
+                component="img"
+                alt="Video Thumbnail"
+                height="140"
+                image={thumbnail}
+                title="Video Thumbnail"
+              />
+              <CardContent className="bg-gray-100">
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {duration} <AvTimerIcon />
+                  {views} <VisibilityIcon />
+                  {Comments} <CommentIcon />
+                  {videoLikes} <ThumbUpOffAltIcon />
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+            <CardContent className="bg-gray-100">
+              <Avatar
+                src={ownerAvatar}
+                alt="Owner Avatar"
+                sx={{ width: 40, height: 40 }}
+              />
+              <Typography variant="body2" color="textSecondary" component="p">
+                <a href="#">channel: {channelName}</a>
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {fullName}
+              </Typography>
+            </CardContent>
+          </Card>
         )}
       </div>
       {!isExpanded && isOwnerMatched && (

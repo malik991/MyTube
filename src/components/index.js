@@ -17,6 +17,7 @@ import SidePanel from "./SidePanel";
 import CustomDropdown from "./CustomDropdown";
 import ProfileComponenet from "./ProfileComponenet";
 import ChangePasswordComponent from "./ChangePasswordComponent";
+import ChannelComponent from "./ChannelComponent";
 
 export {
   Logo,
@@ -38,4 +39,5 @@ export {
   CustomDropdown,
   ProfileComponenet,
   ChangePasswordComponent,
+  ChannelComponent,
 };

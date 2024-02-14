@@ -25,6 +25,7 @@ function Home({ isWatchHistory }) {
         ? await getWatchHistory(page)
         : await dbServiceObj.getAllVideos("title", "desc", null, page);
       const { docs, totalDocs, totalPages } = response.data.data;
+      //console.log("data check: ", response.data.data.docs[0].owner.fullName);
       // console.log(
       //   `docs: ${docs}, totalDocs: ${totalDocs}, totalPages: ${totalPages}`
       // );
@@ -73,6 +74,9 @@ function Home({ isWatchHistory }) {
               Comments={video.totalComments}
               Likes={video.totalLikes}
               videoId={video._id}
+              fullName={video.owner.fullName}
+              ownerAvatar={video.owner.avatar}
+              channelName={video.owner.userName}
               isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
               setExpandedVideo={setExpandedVideo}
             />

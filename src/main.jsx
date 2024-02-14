@@ -21,6 +21,7 @@ import EditVideo from "./pages/EditVideo.jsx";
 import DashBoard from "./pages/DashBoard.jsx";
 import Profile from "./pages/Profile.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
+import Channel from "./pages/Channel.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -108,6 +109,14 @@ const router = createBrowserRouter(
           }
         />
       </Route>
+      <Route
+        path="/channel"
+        element={
+          <ProtectedLayout authentication>
+            <Channel />
+          </ProtectedLayout>
+        }
+      />
     </Route>
   )
 );
