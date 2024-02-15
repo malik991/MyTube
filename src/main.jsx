@@ -109,24 +109,15 @@ const router = createBrowserRouter(
           }
         />
       </Route>
-      <Route
-        path="/channel"
-        element={
-          <ProtectedLayout authentication>
-            <Channel />
-          </ProtectedLayout>
-        }
-      />
+      <Route path="/channel" element={<Channel />} />
     </Route>
   )
 );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <RouterProvider router={router}>{/* <App /> */}</RouterProvider>
+    </PersistGate>
+  </Provider>
 );

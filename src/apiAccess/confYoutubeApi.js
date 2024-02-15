@@ -156,6 +156,27 @@ export class DBServices {
     }
   }
 
+  // get videos by channel or userId
+  async getVideosByUserId(page = 1, channelId) {
+    try {
+      if (!channelId) {
+        return "channel Id not present";
+      }
+
+      let url = `${conf.ServerUrl}/videos/get-channel-videos/${channelId}`;
+      const queryParams = new URLSearchParams({
+        page: page.toString(), // Convert page to string
+      });
+      url += `?${queryParams.toString()}`;
+      console.log("URL: ", url);
+      const res = await axios.get(url);
+      return res;
+    } catch (error) {
+      console.error("Error in get videos by channel/user id :: ", error);
+      throw error;
+    }
+  }
+
   // watch video views
   async getVideoViews(videoId) {
     try {

@@ -9,6 +9,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import LinkButton from "@mui/material/Button";
 
 const ChannelComponent = ({
   channelName,
@@ -21,7 +22,10 @@ const ChannelComponent = ({
   coverImage,
   subscribeTo,
   handleSubscribeClick,
+  isAuthenticated,
+  isOwner,
 }) => {
+  //console.log("isSubscriber: ", isSubscribed, " isOwner: ", isOwner);
   return (
     <Container>
       {/* Hero Header */}
@@ -41,17 +45,33 @@ const ChannelComponent = ({
             sx={{ width: 200, height: 200 }}
           />
         </Grid>
-        <Grid item>
-          <Button
-            variant="contained"
-            color={isSubscribed ? "secondary" : "primary"}
-            endIcon={isSubscribed ? <Favorite /> : <FavoriteBorder />}
-            fullWidth
-            onClick={handleSubscribeClick}
-          >
-            {isSubscribed ? "Unsubscribe" : "Subscribe"}
-          </Button>
-        </Grid>
+        {isOwner && (
+          <Grid>
+            <Grid item>
+              <LinkButton variant="outlined" fullWidth href="/upload-video">
+                upload Video
+              </LinkButton>
+            </Grid>
+            <Grid item>
+              <LinkButton variant="outlined" fullWidth href="/profile">
+                Edit Profile
+              </LinkButton>
+            </Grid>
+          </Grid>
+        )}
+        {!isOwner && (
+          <Grid item>
+            <Button
+              variant="contained"
+              color={isSubscribed ? "secondary" : "primary"}
+              endIcon={isSubscribed ? <Favorite /> : <FavoriteBorder />}
+              fullWidth
+              onClick={handleSubscribeClick}
+            >
+              {isSubscribed ? "Unsubscribe" : "Subscribe"}
+            </Button>
+          </Grid>
+        )}
       </Grid>
 
       {/* Body */}

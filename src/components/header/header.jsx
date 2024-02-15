@@ -66,11 +66,6 @@ function Header() {
       slug: "/dashboard",
       active: authStatus,
     },
-    {
-      name: "My Channel",
-      slug: "/channel",
-      active: authStatus,
-    },
   ];
 
   return (

@@ -37,6 +37,7 @@ const VideoCard = ({
   isExpanded,
   setExpandedVideo,
 }) => {
+  //console.log("chnal: ", channelName);
   const videoRef = useRef(null);
   const [videoComments, setVideoComments] = useState([]);
   const [userComment, setUserComment] = useState("");
@@ -357,13 +358,21 @@ const VideoCard = ({
               </CardContent>
             </CardActionArea>
             <CardContent className="bg-gray-100">
+              <Typography variant="body2" color="textSecondary" component="p">
+                Creator:
+              </Typography>
               <Avatar
                 src={ownerAvatar}
                 alt="Owner Avatar"
                 sx={{ width: 40, height: 40 }}
               />
               <Typography variant="body2" color="textSecondary" component="p">
-                <a href="#">channel: {channelName}</a>
+                <a
+                  className="text-xl font-semibold text-purple-500 underline"
+                  href={`/channel?channelname=${channelName}`}
+                >
+                  Visit @{channelName}
+                </a>
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
                 {fullName}
