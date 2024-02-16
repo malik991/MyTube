@@ -260,13 +260,19 @@ export const toggledSubscription = async (channelUserName) => {
 // get subscribers of the channel
 export const getSubscribersOfChannel = async (channelId) => {
   try {
-    const res = await axios.post(
-      `${conf.ServerUrl}/users/get-subscribers/${channelId}`
+    const res = await axios.get(
+      `${conf.ServerUrl}/users/get-subscribers/${channelId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
     );
     return res;
   } catch (error) {
     console.error("Error in get subscribers :: ", error);
-    throw error?.message;
+    throw error;
   }
 };
 

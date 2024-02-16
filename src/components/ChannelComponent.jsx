@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Typography,
@@ -10,6 +10,9 @@ import {
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import LinkButton from "@mui/material/Button";
+import ButtonBase from "@mui/material/ButtonBase";
+import SubscribersPopover from "./SubscribersPopover";
+import { useSelector } from "react-redux";
 
 const ChannelComponent = ({
   channelName,
@@ -18,6 +21,7 @@ const ChannelComponent = ({
   totalVideos,
   isSubscribed,
   email,
+  channelId,
   avatar,
   coverImage,
   subscribeTo,
@@ -25,7 +29,20 @@ const ChannelComponent = ({
   isAuthenticated,
   isOwner,
 }) => {
-  //console.log("isSubscriber: ", isSubscribed, " isOwner: ", isOwner);
+  //console.log("channel id: ", channelId, " isOwner: ", isOwner);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const auhtStatus = useSelector((state) => state.auth.status);
+
+  const handleClick = (event) => {
+    if (!auhtStatus) {
+      return alert("please login to view subscribers.");
+    }
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <Container>
       {/* Hero Header */}
@@ -52,12 +69,20 @@ const ChannelComponent = ({
             <Grid item mt={4}>
               <Grid container direction="column" spacing={2}>
                 <Grid item>
-                  <Typography variant="h5">@ {channelName}</Typography>
+                  <Typography variant="h5">@{channelName}</Typography>
                 </Grid>
                 <Grid item>
-                  <Typography variant="body1">
-                    Total Subscribers: {totalSubscribers}
-                  </Typography>
+                  {totalSubscribers > 0 ? (
+                    <ButtonBase onClick={handleClick}>
+                      <Typography className="underline">
+                        Total Subscribers: {totalSubscribers}
+                      </Typography>
+                    </ButtonBase>
+                  ) : (
+                    <Typography>
+                      Total Subscribers: {totalSubscribers}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item>
                   <Typography variant="body1">
@@ -67,6 +92,11 @@ const ChannelComponent = ({
                 <Grid item>
                   <Typography variant="body1">
                     Total Videos: {totalVideos}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body1">
+                    Subscribe To: {subscribeTo}
                   </Typography>
                 </Grid>
               </Grid>
@@ -104,6 +134,12 @@ const ChannelComponent = ({
           </Button>
         </Grid>
       )}
+      <SubscribersPopover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        channelId={channelId}
+      />
     </Container>
   );
 };

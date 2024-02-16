@@ -61,11 +61,11 @@ export const MyVideoComponent = ({ channelId }) => {
         <Container>
           <div className="flex flex-wrap">
             <div className="p-2 w-full">
-              <h1 className="text-2xl font-bold hover:text-gray-500">
-                <span style={{ color: "Red" }}>
-                  "{getChannelName ? getChannelName : userData?.userName}"
-                </span>
-                , You do not have any video 🙄
+              <h1 className="text-2xl text-red-600 font-bold hover:text-gray-500">
+                {/* <span style={{ color: "Red" }}>
+                  "{getChannelName ? getChannelName : userData?.userName}"                  
+                </span> */}
+                Channel do not uploaded any video 🙄
               </h1>
               <br />
               <Link to="/upload-video">

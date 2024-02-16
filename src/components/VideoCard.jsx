@@ -217,11 +217,6 @@ const VideoCard = ({
       ref={videoRef}
       className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
     >
-      {/* <div className="py-2">
-        <span className="text-black text-lg font-semibold">
-          {!isExpanded && `Video Title: ${title}`}
-        </span>
-      </div> */}
       <div
         onClick={handleVideoClick}
         className="relative group overflow-hidden transition duration-300 transform hover:scale-105"

@@ -86,6 +86,7 @@ const Channel = () => {
       <>
         <ChannelComponent
           email={channelProfile.email}
+          channelId={channelProfile._id}
           channelName={channelProfile.userName}
           totalSubscribers={channelProfile.SubscriberCount}
           totalViews={channelProfile.totalViews}
