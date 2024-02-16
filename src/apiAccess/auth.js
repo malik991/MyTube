@@ -258,17 +258,19 @@ export const toggledSubscription = async (channelUserName) => {
 };
 
 // get subscribers of the channel
-export const getSubscribersOfChannel = async (channelId) => {
+export const getSubscribersOfChannel = async (page = 1, channelId) => {
   try {
-    const res = await axios.get(
-      `${conf.ServerUrl}/users/get-subscribers/${channelId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      }
-    );
+    let url = `${conf.ServerUrl}/users/get-subscribers/${channelId}`;
+    const queryParams = new URLSearchParams({
+      page: page.toString(), // Convert page to string
+    });
+    url += `?${queryParams.toString()}`;
+    const res = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return res;
   } catch (error) {
     console.error("Error in get subscribers :: ", error);
