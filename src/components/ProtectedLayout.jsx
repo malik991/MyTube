@@ -10,9 +10,10 @@ const ProtectedLayout = ({ children, authentication = true }) => {
   useEffect(() => {
     if (authentication && authStatus !== authentication) {
       navigate("/login");
-    } else if (!authentication && authStatus !== authentication) {
-      navigate("/");
     }
+    // else if (!authentication && authStatus !== authentication) {
+    //   navigate("/dashboard");
+    // }
     setLoader(false);
   }, [authentication, navigate, authStatus]);
 

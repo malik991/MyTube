@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import SidePanel from "./SidePanel";
 import { Container } from "../components";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { dashBoardData } from "../apiAccess/dashBoardApi";
 import { Outlet, useLocation } from "react-router-dom";
+import CustomSnackbar from "./CustomSnackbar";
+import { closeSnackbar } from "../store/snackbarSlice";
 import {
   Chart as chartjs,
   BarElement,
@@ -27,9 +29,14 @@ const DashBoardComponent = () => {
   const [totalSubscribers, setTotalSubscribers] = useState(0);
   const [totalVideos, setTotalVideos] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
+  const dispatch = useDispatch();
 
   const userData = useSelector((state) => state.auth.userData);
   const location = useLocation();
+
+  const handleClose = () => {
+    dispatch(closeSnackbar());
+  };
 
   useEffect(() => {
     fetchData();
@@ -67,6 +74,7 @@ const DashBoardComponent = () => {
 
   return (
     <div className="flex h-screen">
+      <CustomSnackbar handleClose={handleClose} />
       <SidePanel />
       <div className="flex-1 flex flex-col overflow-y-auto p-4">
         <h1 className="text-xxl text-red-500 font-serif font-bold">

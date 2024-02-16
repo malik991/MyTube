@@ -39,58 +39,71 @@ const ChannelComponent = ({
       </Card>
       <Grid container alignItems="center" justifyContent="space-between" p={3}>
         <Grid item>
-          <Avatar
-            src={avatar}
-            alt="Channel Avatar"
-            sx={{ width: 200, height: 200 }}
-          />
-        </Grid>
-        {isOwner && (
-          <Grid>
+          <Grid container direction="row" spacing={8}>
             <Grid item>
-              <LinkButton variant="outlined" fullWidth href="/upload-video">
-                upload Video
-              </LinkButton>
+              <Avatar
+                src={avatar}
+                alt="Channel Avatar"
+                sx={{ width: 220, height: 220 }}
+              />
             </Grid>
-            <Grid item>
-              <LinkButton variant="outlined" fullWidth href="/profile">
-                Edit Profile
-              </LinkButton>
-            </Grid>
-          </Grid>
-        )}
-        {!isOwner && (
-          <Grid item>
-            <Button
-              variant="contained"
-              color={isSubscribed ? "secondary" : "primary"}
-              endIcon={isSubscribed ? <Favorite /> : <FavoriteBorder />}
-              fullWidth
-              onClick={handleSubscribeClick}
-            >
-              {isSubscribed ? "Unsubscribe" : "Subscribe"}
-            </Button>
-          </Grid>
-        )}
-      </Grid>
 
-      {/* Body */}
-      <Grid container spacing={2} mt={2}>
-        <Grid item xs={12}>
-          <Typography variant="h4">{channelName}</Typography>
+            {/* Body */}
+            <Grid item mt={4}>
+              <Grid container direction="column" spacing={2}>
+                <Grid item>
+                  <Typography variant="h5">@ {channelName}</Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body1">
+                    Total Subscribers: {totalSubscribers}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body1">
+                    Total Views: {totalViews}
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography variant="body1">
+                    Total Videos: {totalVideos}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body1">
-            Total Subscribers: {totalSubscribers}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body1">Total Views: {totalViews}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body1">Total Videos: {totalVideos}</Typography>
-        </Grid>
+
+        {isOwner && (
+          <Grid item>
+            <Grid container direction="column" spacing={1}>
+              <Grid item>
+                <LinkButton variant="outlined" fullWidth href="/upload-video">
+                  Upload Video
+                </LinkButton>
+              </Grid>
+              <Grid item>
+                <LinkButton variant="outlined" fullWidth href="/profile">
+                  Edit Profile
+                </LinkButton>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
       </Grid>
+      {/* Subscriber Button */}
+      {!isOwner && (
+        <Grid container justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color={isSubscribed ? "secondary" : "primary"}
+            endIcon={isSubscribed ? <Favorite /> : <FavoriteBorder />}
+            onClick={handleSubscribeClick}
+          >
+            {isSubscribed ? "Unsubscribe" : "Subscribe"}
+          </Button>
+        </Grid>
+      )}
     </Container>
   );
 };

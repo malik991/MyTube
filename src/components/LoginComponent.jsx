@@ -1,50 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
+import { openSnackbar } from "../store/snackbarSlice";
 
 import { useDispatch } from "react-redux";
 import { Button, InputField, Logo } from "./index";
-//import authServieObj from "../appwrite/auth";
-import { useForm } from "react-hook-form"; // this is the main hook by which we will use forms
+import { useForm } from "react-hook-form";
 import { loginUser } from "../apiAccess/auth";
-// import { DevTool } from "@hookform/devtools";
 
 function LoginComponent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit, formState } = useForm({}); // control use for devTool
+  const { register, handleSubmit, formState } = useForm({});
   const [error, setError] = useState("");
+
   const [btnClicked, setBtnClicked] = useState(false);
-  const { errors: hookErrors } = formState; // hook field hookErrors
+  const { errors: hookErrors } = formState;
 
   const loginFun = async (data) => {
-    //console.log("function called", data);
     setError("");
     try {
-      // chec btn clicked and change its appearence
       setBtnClicked(true);
       const res = await loginUser(data);
-      //console.log("data: ", res.data?.data?.user?._id);
       if (res) {
         const sanitizedData = {
-          // Extract only the necessary properties from res.data
-
           id: res.data?.data?.user?._id,
           userName: res.data?.data?.user?.userName,
           email: res.data?.data?.user?.email,
           fullName: res.data?.data?.user?.fullName,
           avatar: res.data?.data?.user?.avatar,
           coverImage: res.data?.data?.user?.coverImage,
-          // Add more properties as needed
         };
         dispatch(authLogin(sanitizedData));
-        navigate("/my-videos");
-        //}
+        dispatch(
+          openSnackbar(`Welcome, ${sanitizedData.userName} to My-Tube.😊`)
+        );
+        navigate("/dashboard");
       } else {
-        alert("login failed, please try again");
+        alert("Login failed, please try again");
       }
     } catch (error) {
-      console.log("error in login componenet: ", error);
+      console.log("error in login component: ", error);
       setError(error.response?.data?.message || "An error occurred");
     } finally {
       setBtnClicked(false);
@@ -73,11 +69,6 @@ function LoginComponent() {
           </Link>
         </p>
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
-        {/* here handleSubmit is key word and a function and an event comes 
-        from hook-form and it get
-         your function like login where form will be submitted , now do not need
-         to manage state of your inputs hook-form manage it itself*/}
-
         <form className="mt-8" onSubmit={handleSubmit(loginFun)} noValidate>
           <div className="space-y-5">
             <InputField
@@ -86,35 +77,7 @@ function LoginComponent() {
               type="emailOrUserName"
               {...register("emailOrUserName", {
                 required: "Email or Username is required",
-                validate: {
-                  notEmailOrUsername: (fieldValue) => {
-                    const isEmail =
-                      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                        fieldValue
-                      );
-                    const isUsername = /^[a-zA-Z0-9]+$/.test(fieldValue);
-                    if (isEmail) {
-                      return (
-                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                          fieldValue
-                        ) || "Invalid Email format"
-                      );
-                    }
-                    if (isUsername) {
-                      // Add additional username validation logic if needed
-                      return true;
-                    }
-
-                    // If it's not an email or username, show an error message
-                    return "Invalid Email or Username format";
-                  },
-                  notAdmin: (fieldValue) => {
-                    return (
-                      fieldValue !== "admin@mytube.com" ||
-                      "enter Different Email Address"
-                    );
-                  },
-                },
+                // Add your validation rules here
               })}
             />
             {hookErrors.emailOrUserName?.message && (
@@ -130,13 +93,9 @@ function LoginComponent() {
               {...register("password", {
                 required: {
                   value: true,
-                  message: "Password is mendatory",
+                  message: "Password is mandatory",
                 },
-                // pattern: {
-                //   value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{5,}$/,
-                //   message:
-                //     "min 5 chracters, 1 uppercase and 1 digit i.e Masdfgq12",
-                // },
+                // Add your validation rules here
               })}
             />
             {hookErrors.password?.message && (
@@ -157,7 +116,6 @@ function LoginComponent() {
             </Button>
           </div>
         </form>
-        {/* <DevTool control={control} /> */}
       </div>
     </div>
   );

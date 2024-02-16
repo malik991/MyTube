@@ -241,7 +241,14 @@ export const getWatchHistory = async (page = 1) => {
 export const toggledSubscription = async (channelUserName) => {
   try {
     const res = await axios.post(
-      `${conf.ServerUrl}/users/toggled-subscription/${channelUserName}`
+      `${conf.ServerUrl}/users/toggled-subscription/${channelUserName}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
     );
     return res;
   } catch (error) {

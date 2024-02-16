@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
+import { closeSnackbar } from "../../store/snackbarSlice";
 import { logoutUser } from "../../apiAccess/auth";
 import { useNavigate } from "react-router-dom";
 import { persistor } from "../../store/store";
@@ -10,10 +11,15 @@ function LogOutBtn() {
   const navigate = useNavigate();
 
   async function handleLogout() {
-    await logoutUser();
-    dispatch(logout());
-    persistor.purge(); // remove data from local storage of persisit
-    navigate("/login");
+    try {
+      await logoutUser();
+      dispatch(logout());
+      dispatch(closeSnackbar());
+      persistor.purge(); // remove data from local storage of persisit
+      navigate("/login");
+    } catch (error) {
+      console.log("error in LogOutBtn.jsx: ", error);
+    }
   }
 
   return (

@@ -6,6 +6,7 @@ import { persistor } from "../../store/store";
 import { logoutUser } from "../../apiAccess/auth";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
+import { closeSnackbar } from "../../store/snackbarSlice";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
@@ -29,10 +30,15 @@ function Header() {
   };
 
   const handleLogout = async () => {
-    await logoutUser();
-    dispatch(logout());
-    persistor.purge();
-    navigate("/login");
+    try {
+      await logoutUser();
+      dispatch(logout());
+      dispatch(closeSnackbar());
+      persistor.purge();
+      navigate("/login");
+    } catch (error) {
+      console.log("error in header.jsx: ", error);
+    }
   };
 
   const options = [

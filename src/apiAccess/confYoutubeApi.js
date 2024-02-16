@@ -168,7 +168,7 @@ export class DBServices {
         page: page.toString(), // Convert page to string
       });
       url += `?${queryParams.toString()}`;
-      console.log("URL: ", url);
+      //console.log("URL: ", url);
       const res = await axios.get(url);
       return res;
     } catch (error) {
