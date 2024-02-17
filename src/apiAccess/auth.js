@@ -279,14 +279,23 @@ export const getSubscribersOfChannel = async (page = 1, channelId) => {
 };
 
 // get channel subscribeTo
-export const getChannelsSubscribeTo = async (subscriberId) => {
+export const getChannelsSubscribeTo = async (page = 1, subscriberId) => {
   try {
-    const res = await axios.post(
-      `${conf.ServerUrl}/users/get-channel-list/${subscriberId}`
-    );
+    // console.log("susbcriber id:", subscriberId);
+    let url = `${conf.ServerUrl}/users/get-channel-list/${subscriberId}`;
+    const queryParams = new URLSearchParams({
+      page: page.toString(), // Convert page to string
+    });
+    url += `?${queryParams.toString()}`;
+    const res = await axios.get(url, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
     return res;
   } catch (error) {
     console.error("Error in get channel subscribeTo :: ", error);
-    throw error?.message;
+    throw error;
   }
 };

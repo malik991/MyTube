@@ -31,13 +31,19 @@ const ChannelComponent = ({
 }) => {
   //console.log("channel id: ", channelId, " isOwner: ", isOwner);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [linkType, setLinkType] = useState(null); // State to track linkType
   const auhtStatus = useSelector((state) => state.auth.status);
 
-  const handleClick = (event) => {
+  const handleClick = (event, linkType) => {
     if (!auhtStatus) {
-      return alert("please login to view subscribers.");
+      if (linkType === "totalSubscribers") {
+        return alert("please login to view subscribers.");
+      } else if (linkType === "subscribeTo") {
+        return alert("please login to view Subscribed To.");
+      }
     }
     setAnchorEl(event.currentTarget);
+    setLinkType(linkType);
   };
 
   const handleClose = () => {
@@ -66,15 +72,26 @@ const ChannelComponent = ({
             </Grid>
 
             {/* Body */}
-            <Grid item mt={4}>
-              <Grid container direction="column" spacing={2}>
-                <Grid item>
+            <Grid item mt={2}>
+              <Grid container direction="column" spacing={1}>
+                <Grid item textAlign={"left"}>
                   <Typography variant="h5">@{channelName}</Typography>
                 </Grid>
-                <Grid item>
+                <Grid item textAlign={"left"}>
                   {totalSubscribers > 0 ? (
-                    <ButtonBase onClick={handleClick}>
-                      <Typography className="underline">
+                    <ButtonBase
+                      onClick={(event) =>
+                        handleClick(event, "totalSubscribers")
+                      }
+                    >
+                      <Typography
+                        className="underline"
+                        sx={{
+                          fontSize: "1.2rem", // You can adjust the font size as needed
+                          fontWeight: "bold", // Add other styles as needed
+                          color: "red", // Apply text color
+                        }}
+                      >
                         Total Subscribers: {totalSubscribers}
                       </Typography>
                     </ButtonBase>
@@ -84,20 +101,38 @@ const ChannelComponent = ({
                     </Typography>
                   )}
                 </Grid>
-                <Grid item>
+                <Grid item textAlign={"left"}>
                   <Typography variant="body1">
                     Total Views: {totalViews}
                   </Typography>
                 </Grid>
-                <Grid item>
+                <Grid item textAlign={"left"}>
                   <Typography variant="body1">
                     Total Videos: {totalVideos}
                   </Typography>
                 </Grid>
-                <Grid item>
-                  <Typography variant="body1">
-                    Subscribe To: {subscribeTo}
-                  </Typography>
+                <Grid item textAlign={"left"}>
+                  {subscribeTo > 0 ? (
+                    <ButtonBase
+                      onClick={(event) => handleClick(event, "subscribeTo")}
+                    >
+                      <Typography
+                        className="underline"
+                        sx={{
+                          fontSize: "1.2rem",
+                          fontWeight: "bold",
+                          color: "red",
+                        }}
+                      >
+                        Subscribed To: {subscribeTo}
+                      </Typography>
+                    </ButtonBase>
+                  ) : (
+                    <Typography>Subscriberd To: {subscribeTo}</Typography>
+                  )}
+                </Grid>
+                <Grid item textAlign={"left"}>
+                  <Typography variant="body1">contact: {email}</Typography>
                 </Grid>
               </Grid>
             </Grid>
@@ -139,6 +174,7 @@ const ChannelComponent = ({
         anchorEl={anchorEl}
         handleClose={handleClose}
         channelId={channelId}
+        linkType={linkType}
       />
     </Container>
   );
