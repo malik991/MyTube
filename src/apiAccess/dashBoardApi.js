@@ -1,13 +1,11 @@
-import conf from "../config/viteConfiguration";
-import axios from "axios";
+import axiosInstance from "../config/axiosInstance";
 
 export const dashBoardData = async () => {
   try {
-    const res = await axios.get(`${conf.ServerUrl}/dashboard/channel-status`, {
+    const res = await axiosInstance.get(`/dashboard/channel-status`, {
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
     });
     //console.log("auth res: ", res);
     return res;

@@ -1,5 +1,6 @@
 import conf from "../config/viteConfiguration";
 import axios from "axios";
+import axiosInstance from "../config/axiosInstance";
 
 export class DBServices {
   async updateTitleDesc({ title, description, isPublished }, videoId) {
@@ -8,14 +9,13 @@ export class DBServices {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("isPublished", isPublished);
-      const res = await axios.patch(
-        `${conf.ServerUrl}/videos/update-title-description/${videoId}`,
+      const res = await axiosInstance.patch(
+        `/videos/update-title-description/${videoId}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true,
         }
       );
       return res;
@@ -33,16 +33,11 @@ export class DBServices {
       formData.append("description", description);
       formData.append("isPublished", isPublished);
 
-      const res = await axios.post(
-        `${conf.ServerUrl}/videos/upload-video`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axiosInstance.post(`/videos/upload-video`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return res;
     } catch (error) {
       console.error("Error in upload video :: ", error);
@@ -54,14 +49,13 @@ export class DBServices {
       const formData = new FormData();
       formData.append("thumbNail", thumbNail[0]);
 
-      const res = await axios.patch(
-        `${conf.ServerUrl}/videos/update-thumbnail/${videoId}`,
+      const res = await axiosInstance.patch(
+        `/videos/update-thumbnail/${videoId}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true,
         }
       );
       return res;
@@ -102,16 +96,15 @@ export class DBServices {
   // user specific videos
   async getUserVideos(page = 1) {
     try {
-      let url = `${conf.ServerUrl}/videos/user-specific-videos`;
+      let url = `/videos/user-specific-videos`;
       const queryParams = new URLSearchParams({
         page: page.toString(), // Convert page to string
       });
       url += `?${queryParams.toString()}`;
-      const res = await axios.get(url, {
+      const res = await axiosInstance.get(url, {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       });
       return res;
     } catch (error) {
@@ -122,13 +115,12 @@ export class DBServices {
   // delete video
   async deleteVideo(videoId) {
     try {
-      const res = await axios.delete(
-        `${conf.ServerUrl}/videos/delete-video/${videoId}`,
+      const res = await axiosInstance.delete(
+        `/videos/delete-video/${videoId}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         }
       );
       return res;
@@ -140,15 +132,11 @@ export class DBServices {
   //get video by id and increase the views
   async getVideoById(videoId) {
     try {
-      const res = await axios.get(
-        `${conf.ServerUrl}/videos/get-video/${videoId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axiosInstance.get(`/videos/get-video/${videoId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return res;
     } catch (error) {
       console.error("Error in get video by id :: ", error);
@@ -180,15 +168,11 @@ export class DBServices {
   // watch video views
   async getVideoViews(videoId) {
     try {
-      const res = await axios.get(
-        `${conf.ServerUrl}/videos/watch-video/${videoId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axiosInstance.get(`/videos/watch-video/${videoId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return res;
     } catch (error) {
       console.error("Error in get video views :: ", error);
@@ -198,13 +182,18 @@ export class DBServices {
   // toggle publish status of video
   async toggledPublishVideoStatus(videoId) {
     try {
-      const res = await axios.get(
-        `${conf.ServerUrl}/videos/publish-status/${videoId}`
+      const res = await axiosInstance.patch(
+        `/videos/publish-status/${videoId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       return res;
     } catch (error) {
       console.error("Error in toggle publish video status :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   // create playlist
@@ -213,8 +202,8 @@ export class DBServices {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("description", description);
-      const res = await axios.post(
-        `${conf.ServerUrl}/playlist/create-play-list`,
+      const res = await axiosInstance.post(
+        `/playlist/create-play-list`,
         formData,
         {
           headers: {
@@ -237,8 +226,8 @@ export class DBServices {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("description", description);
-      const res = await axios.post(
-        `${conf.ServerUrl}/playlist/update-playlist/${playlistId}`,
+      const res = await axiosInstance.post(
+        `/playlist/update-playlist/${playlistId}`,
         formData,
         {
           headers: {
@@ -258,8 +247,14 @@ export class DBServices {
       if (!videoId || !playlistId) {
         return "Playlist Id and video id is mendatory";
       }
-      const res = await axios.post(
-        `${conf.ServerUrl}/playlist/add-video-into-playlist/${videoId}/${playlistId}`
+      const res = await axiosInstance.post(
+        `/playlist/add-video-into-playlist/${videoId}/${playlistId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       return res;
     } catch (error) {
@@ -335,16 +330,15 @@ export class DBServices {
       if (!videoId) {
         return "Video Id is mendatory";
       }
-      let url = `${conf.ServerUrl}/comment/get-comments/${videoId}`;
+      let url = `/comment/get-comments/${videoId}`;
       const queryParams = new URLSearchParams({
         page: page.toString(),
       });
       url += `?${queryParams.toString()}`;
-      const res = await axios.get(url, {
+      const res = await axiosInstance.get(url, {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       });
       return res;
     } catch (error) {
@@ -361,14 +355,13 @@ export class DBServices {
       }
       const formData = new FormData();
       formData.append("content", content);
-      const res = await axios.post(
-        `${conf.ServerUrl}/comment/add-comment/${videoId}`,
+      const res = await axiosInstance.post(
+        `/comment/add-comment/${videoId}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true,
         }
       );
       return res;
@@ -384,13 +377,12 @@ export class DBServices {
       if (!videoId) {
         return "Video Id is mendatory";
       }
-      const res = await axios.get(
-        `${conf.ServerUrl}/like/liked-videos-by-videoId/v/${videoId}`,
+      const res = await axiosInstance.get(
+        `/like/liked-videos-by-videoId/v/${videoId}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         }
       );
       return res;
@@ -405,14 +397,13 @@ export class DBServices {
       if (!videoId) {
         return "Video Id is mendatory";
       }
-      const res = await axios.post(
-        `${conf.ServerUrl}/like/toggle/v/${videoId}`,
+      const res = await axiosInstance.post(
+        `/like/toggle/v/${videoId}`,
         {},
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         }
       );
       return res;
