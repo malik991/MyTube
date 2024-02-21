@@ -16,7 +16,7 @@ const SidePanel = () => {
   }, []);
 
   return (
-    <div className="w-1/5 bg-gray-400 p-4 text-white rounded-lg flex flex-col items-center">
+    <div className="side-panel flex flex-col justify-between h-screen bg-gray-400 p-4 text-white">
       {profileImage && (
         <div className="m-4 p-2 content-center">
           <Avatar src={profileImage} sx={{ width: 90, height: 90 }} />

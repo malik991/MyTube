@@ -22,6 +22,7 @@ import DashBoard from "./pages/DashBoard.jsx";
 import Profile from "./pages/Profile.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 import Channel from "./pages/Channel.jsx";
+import PlayListPage from "./pages/PlayListPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,6 +49,14 @@ const router = createBrowserRouter(
         element={
           <ProtectedLayout authentication>
             <Profile />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/playlist"
+        element={
+          <ProtectedLayout authentication>
+            <PlayListPage />
           </ProtectedLayout>
         }
       />

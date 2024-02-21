@@ -32,16 +32,19 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-
-    const serverErrorMessage = error.response?.data?.match(
-      /<pre>([\s\S]*?)<\/pre>/
-    )?.[1];
     let errorJWT;
-    if (serverErrorMessage) {
-      const splitContent = serverErrorMessage?.split("<br>");
-      errorJWT = splitContent && splitContent[0].trim();
-      //setError(splitContent ? splitContent[0].trim() : "An error occurred");
+    if (error.response.status === 403) {
+      const serverErrorMessage = error.response?.data?.match(
+        /<pre>([\s\S]*?)<\/pre>/
+      )?.[1];
+
+      if (serverErrorMessage) {
+        const splitContent = serverErrorMessage?.split("<br>");
+        errorJWT = splitContent && splitContent[0].trim();
+        //setError(splitContent ? splitContent[0].trim() : "An error occurred");
+      }
     }
+
     if (
       error.response.status === 403 &&
       errorJWT?.trim() === "Error: jwt expired"

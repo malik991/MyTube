@@ -263,19 +263,6 @@ export class DBServices {
     }
   }
 
-  // get user playlists
-  async getUserPlaylists() {
-    try {
-      const res = await axios.get(
-        `${conf.ServerUrl}/videos/check-user-playlist`
-      );
-      return res;
-    } catch (error) {
-      console.error("Error in get user playlists :: ", error);
-      throw error?.message;
-    }
-  }
-
   // delete playlist
   async deletePlaylist(playlistId) {
     try {

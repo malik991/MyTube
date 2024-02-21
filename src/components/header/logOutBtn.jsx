@@ -5,6 +5,7 @@ import { closeSnackbar } from "../../store/snackbarSlice";
 import { logoutUser } from "../../apiAccess/auth";
 import { useNavigate } from "react-router-dom";
 import { persistor } from "../../store/store";
+import { logOut as playListLogout } from "../../store/playListSlice";
 
 function LogOutBtn() {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ function LogOutBtn() {
     try {
       await logoutUser();
       dispatch(logout());
+      dispatch(playListLogout());
       dispatch(closeSnackbar());
       persistor.purge(); // remove data from local storage of persisit
       navigate("/login");

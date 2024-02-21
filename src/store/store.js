@@ -13,11 +13,13 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+import playListSlice from "./playListSlice";
 
 // Combine multiple slices into a rootReducer
 const rootReducer = combineReducers({
   auth: authSlice,
   snackbar: snackbarSlice,
+  playlist: playListSlice,
   //another: anotherSlice,
   // Add more slices as needed
 });
@@ -25,7 +27,7 @@ const persistConfig = {
   key: "root",
   storage,
   //whitelist: ['auth'], // Only persist the 'auth' slice
-  // blacklist: ['snackbar'], // Uncomment this line to exclude the 'snackbar' slice from persistence
+  blacklist: ["playlist"], // Uncomment this line to exclude the 'snackbar' slice from persistence
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, rootReducer);

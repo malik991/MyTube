@@ -1,3 +1,4 @@
+import AccountMenu from "../AccountMenu.jsx";
 import React, { useState, useEffect } from "react";
 import { Logo, Container, CustomDropdown } from "../index.js"; // Assuming these are your custom components
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -7,44 +8,41 @@ import { logoutUser } from "../../apiAccess/auth";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { closeSnackbar } from "../../store/snackbarSlice";
+import WidgetsIcon from "@mui/icons-material/Widgets";
+import SwipeableTemporaryDrawer from "../MaterialUI/MainMenueMUI.jsx";
+import Tooltip from "@mui/material/Tooltip";
+import { logOut as playListLogout } from "../../store/playListSlice.js";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
-  const [avatar, setAvatar] = useState(userData?.avatar);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (userData?.avatar) {
-      setAvatar(userData.avatar);
-    }
-  }, [userData]);
-
-  const handleDropdownChange = (option) => {
-    // Handle dropdown change here
-    console.log("Selected value:", option.value);
-    if (option?.value === "profile") {
-      navigate(option?.value);
-    }
-  };
-
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      dispatch(logout());
-      dispatch(closeSnackbar());
-      persistor.purge();
-      navigate("/login");
+      const res = await logoutUser();
+      if (res) {
+        dispatch(logout());
+        dispatch(playListLogout());
+        dispatch(closeSnackbar());
+        persistor.purge();
+        navigate("/login");
+      }
     } catch (error) {
       console.log("error in header.jsx: ", error);
     }
   };
 
-  const options = [
-    { label: "Profile", value: "profile" },
-    { label: "Logout", value: "logout", action: handleLogout },
-  ];
+  const handleNavLinkClick = () => {
+    setIsDrawerOpen(true);
+  };
+
+  // const options = [
+  //   { label: "Profile", value: "profile" },
+  //   { label: "Logout", value: "logout", action: handleLogout },
+  // ];
 
   const navItems = [
     {
@@ -72,17 +70,31 @@ function Header() {
       slug: "/dashboard",
       active: authStatus,
     },
+    {
+      name: "My PlayList",
+      slug: "/playlist",
+      active: authStatus,
+    },
   ];
 
   return (
     <header className="py-3 shadow-xl ring-inherit bg-[#F3F3F3] rounded-lg mx-2 mt-2">
       <Container>
-        <nav className="flex">
+        <nav className="flex items-center justify-between">
           <>
-            <div className="mr-4">
+            <div className="flex items-center space-x-2 ">
               <Link to="/">
-                <Logo width="70px" />
+                <Logo className="w-10 h-auto" />
               </Link>
+              {authStatus && (
+                <Tooltip title="Menu">
+                  <WidgetsIcon
+                    className="cursor-pointer text-gray-700 hover:text-gray-900"
+                    onClick={handleNavLinkClick}
+                    fontSize="large"
+                  />
+                </Tooltip>
+              )}
             </div>
             <ul className="flex ml-auto">
               {navItems.map((item) =>
@@ -104,19 +116,29 @@ function Header() {
                 ) : null
               )}
               {authStatus && (
-                <div className="ml-3">
-                  <li className="ml-2 text-lg">
-                    <CustomDropdown
+                <div className="ml-0">
+                  <li className="ml-1">
+                    {userData && (
+                      <AccountMenu
+                        avatar={userData.avatar}
+                        handleLogout={handleLogout}
+                      />
+                    )}
+                    {/* <CustomDropdown
                       avatar={avatar}
                       options={options}
                       onChange={handleDropdownChange}
-                    />
+                    /> */}
                   </li>
                 </div>
               )}
             </ul>
           </>
         </nav>
+        <SwipeableTemporaryDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+        />
       </Container>
     </header>
   );

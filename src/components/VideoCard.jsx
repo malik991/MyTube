@@ -12,6 +12,7 @@ import { InputField, Button } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Tooltip from "@mui/material/Tooltip";
 import {
   Card,
   CardActionArea,
@@ -250,8 +251,11 @@ const VideoCard = ({
                       onMouseEnter={() => setHovered(true)}
                       onMouseLeave={() => setHovered(false)}
                     >
-                      <ThumbUpOffAltIcon />
-                      {hovered && !likedBtn && " Like this video"}
+                      <Tooltip title="Like / disLike">
+                        <ThumbUpOffAltIcon />
+                      </Tooltip>
+
+                      {/* {hovered && !likedBtn && " Like this video"} */}
                     </button>
                   </span>
                 </div>

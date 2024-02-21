@@ -13,6 +13,7 @@ import {
 import { Avatar } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
 
 const SubscribersPopover = ({
   open,
@@ -90,7 +91,20 @@ const SubscribersPopover = ({
         {allSubscribers ? (
           <>
             {allSubscribers.map((channel) => (
-              <List key={channel._id} sx={{ padding: 0 }}>
+              <List
+                key={channel._id}
+                sx={{
+                  py: 0,
+                  mx: 1,
+                  my: 1,
+                  width: "100%",
+                  maxWidth: 360,
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: "divider",
+                  backgroundColor: "background.paper",
+                }}
+              >
                 <ListItem>
                   <ListItemText
                     primary={
@@ -113,6 +127,7 @@ const SubscribersPopover = ({
                     }
                   />
                 </ListItem>
+                <Divider variant="middle" component="li" />
               </List>
             ))}
             {totalPages > 1 && (
