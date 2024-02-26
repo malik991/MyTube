@@ -24,35 +24,6 @@ export const fetchPlayLists = createAsyncThunk(
     }
   }
 );
-export const createPlayLists = createAsyncThunk(
-  "playListThunk/createPlayLists",
-  async ({ name, description, coverImage, isPublished }) => {
-    try {
-      if (!name) {
-        return "playList name is mendatory";
-      }
-      const formData = new FormData();
-      formData.append("coverImage", coverImage);
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("isPublished", isPublished);
-      const res = await axiosInstance.post(
-        `/playlist/create-play-list`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      //console.log("data in slice: ", res.data.data);
-      return res.data?.data;
-    } catch (error) {
-      console.log("Error in create PlayList Thunk:: ", error);
-      throw error.response.data;
-    }
-  }
-);
 
 const initialState = {
   userPlayLists: [], // Use an object to store posts for each user
@@ -92,28 +63,8 @@ const PlayListThunk = createSlice({
       })
       .addCase(fetchPlayLists.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
-      })
-      .addCase(createPlayLists.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(createPlayLists.fulfilled, (state, action) => {
-        if (action.payload.length === 0) {
-          state.status = "idle";
-        } else {
-          state.status = "succeeded";
-          //state.userPlayLists = action.payload;
-          //state.totalPages = action.payload.totalPages;
-          //const userId = action.meta.arg;
-          //console.log("user id: ", userId);
-          //state.userPosts[userId] = action.payload;
-          state.error = null;
-        }
-      })
-      .addCase(createPlayLists.rejected, (state, action) => {
-        console.log("action payload: ", action);
-        state.status = "failed";
-        state.error = action.error.message;
+        state.error = state.error =
+          action.payload || action.error.message || "An error occurred";
       });
   },
 });

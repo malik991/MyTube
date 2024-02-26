@@ -269,13 +269,19 @@ export class DBServices {
       if (!playlistId) {
         return "Playlist Id is mendatory";
       }
-      const res = await axios.delete(
-        `${conf.ServerUrl}/playlist/delete-playlist/${playlistId}`
+      const res = await axiosInstance.delete(
+        `/playlist/delete-playlist/${playlistId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       return res;
     } catch (error) {
       console.error("Error in delete playlist :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
 

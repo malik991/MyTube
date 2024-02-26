@@ -15,7 +15,7 @@ const CustomSnackbar = ({ handleClose }) => {
     open && (
       <Snackbar
         open={open}
-        autoHideDuration={3000}
+        autoHideDuration={2500}
         onClose={handleClose}
         message={message}
         TransitionComponent={Slide}

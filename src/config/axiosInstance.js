@@ -16,7 +16,7 @@ async function refreshAccessToken() {
     });
     // Extract the new access token from the response
     const { accessToken } = response.data?.data;
-    // console.log("response toekn axioinstance: ", accessToken);
+    //console.log("response toekn axioinstance: ", accessToken);
     return accessToken;
   } catch (error) {
     // Handle error
@@ -32,25 +32,27 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    let errorJWT;
-    if (error.response.status === 403) {
-      const serverErrorMessage = error.response?.data?.match(
-        /<pre>([\s\S]*?)<\/pre>/
-      )?.[1];
+    //let errorJWT;
+    // if (error.response.status === 403) {
+    //   const serverErrorMessage = error.response?.data?.match(
+    //     /<pre>([\s\S]*?)<\/pre>/
+    //   )?.[1];
 
-      if (serverErrorMessage) {
-        const splitContent = serverErrorMessage?.split("<br>");
-        errorJWT = splitContent && splitContent[0].trim();
-        //setError(splitContent ? splitContent[0].trim() : "An error occurred");
-      }
-    }
+    //   if (serverErrorMessage) {
+    //     const splitContent = serverErrorMessage?.split("<br>");
+    //     errorJWT = splitContent && splitContent[0].trim();
+    //     //setError(splitContent ? splitContent[0].trim() : "An error occurred");
+    //   }
+    // }
 
-    if (
-      error.response.status === 403 &&
-      errorJWT?.trim() === "Error: jwt expired"
-      //error.response.data.trim() === "jwt expired"
-    ) {
+    if (error.response.status === 403 && !error.response.data.success) {
       try {
+        console.log(
+          "new Error: ",
+          error.response.status,
+          "isSuucess: ",
+          error.response.data.success
+        );
         const newAccessToken = await refreshAccessToken();
         originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
         // Retry the original request with the new access token
