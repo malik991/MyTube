@@ -22,7 +22,12 @@ import {
   Avatar,
   IconButton,
 } from "@mui/material";
-
+import MenuComponent from "./MaterialUI/MenuComponent";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import DownloadIcon from "@mui/icons-material/Download";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import ConfirmationDialog from "./MaterialUI/ConfirmationDialog";
+import AddToPlaylistDialog from "./MaterialUI/AddToPlaylistDialog";
 const VideoCard = ({
   thumbnail,
   videoFile,
@@ -58,7 +63,8 @@ const VideoCard = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
-
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [addToPlaylistOpen, setAddToPlaylistOpen] = useState(false);
   // check the owner and logged in user
   let isOwnerMatched = false;
   if (owner) {
@@ -87,7 +93,6 @@ const VideoCard = ({
     }
   };
 
-  // page btn clicked
   const handlePageChange = (newPage) => {
     setPageBtnClicked(true);
     if (newPage >= 1 && newPage <= totalPages) {
@@ -95,13 +100,14 @@ const VideoCard = ({
     }
   };
   const handleVideoClick = async (e) => {
+    //console.log("btn clicked");
     if (
       e.target.tagName.toLowerCase() === "input" ||
       e.target.tagName.toLowerCase() === "button" ||
       isExpanded
     ) {
       // If the click happened inside an input or button, do nothing
-      //console.log("btn clicked");
+
       return;
     }
     try {
@@ -213,13 +219,59 @@ const VideoCard = ({
     }
   };
 
+  /// menu items
+  const handleAddToPlaylist = () => {
+    // Logic to add video to playlist
+    if (authStatus) {
+      console.log("Video added to playlist");
+      setAddToPlaylistOpen(true);
+    } else {
+      setConfirmationOpen(true);
+    }
+  };
+
+  const handleOtherAction = () => {
+    // Other action logic
+    console.log("Other action executed");
+  };
+
+  const menuItems = [
+    {
+      label: "Add to Playlist",
+      icon: <PlaylistAddIcon />,
+      onClick: handleAddToPlaylist,
+    },
+    {
+      label: "Download",
+      icon: <DownloadIcon />,
+      onClick: handleOtherAction,
+    },
+    {
+      label: "Cut",
+      icon: <ContentCutIcon />,
+      onClick: handleOtherAction,
+    },
+    // Add more menu items as needed
+  ];
+
+  const handleConfirm = () => {
+    // Handle confirmation action, like navigating to login page
+    navigate("/login");
+    setConfirmationOpen(false); // Close the dialog after confirmation
+  };
+
+  const handleClose = () => {
+    // Close the dialog without taking any action
+    setConfirmationOpen(false);
+  };
+
   return (
     <div
       ref={videoRef}
       className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
     >
       <div
-        onClick={handleVideoClick}
+        // onClick={handleVideoClick}
         className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
       >
         {isExpanded ? (
@@ -241,23 +293,22 @@ const VideoCard = ({
                     <VisibilityIcon /> {views}
                   </span>
                 </div>
-                <div className="text-center">
-                  <span>
-                    <button
-                      onClick={handleLikeClick}
-                      className={`transition-colors ${
-                        likedBtn ? "text-red-500" : "text-black"
-                      }`}
-                      onMouseEnter={() => setHovered(true)}
-                      onMouseLeave={() => setHovered(false)}
-                    >
-                      <Tooltip title="Like / disLike">
-                        <ThumbUpOffAltIcon />
-                      </Tooltip>
+                <div className="flex items-end ">
+                  <button
+                    onClick={handleLikeClick}
+                    className={`transition-colors mr-4 ${
+                      likedBtn ? "text-red-500" : "text-black"
+                    }`}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}
+                  >
+                    <Tooltip title="Like / disLike">
+                      <ThumbUpOffAltIcon />
+                    </Tooltip>
 
-                      {/* {hovered && !likedBtn && " Like this video"} */}
-                    </button>
-                  </span>
+                    {/* {hovered && !likedBtn && " Like this video"} */}
+                  </button>
+                  <MenuComponent menuItems={menuItems} />
                 </div>
               </div>
               <div>
@@ -346,6 +397,7 @@ const VideoCard = ({
                 height="140"
                 image={thumbnail}
                 title="Video Thumbnail"
+                onClick={(e) => handleVideoClick(e)}
               />
               <CardContent className="bg-gray-100">
                 <Typography variant="body2" color="textSecondary" component="p">
@@ -376,6 +428,7 @@ const VideoCard = ({
               <Typography variant="body2" color="textSecondary" component="p">
                 {fullName}
               </Typography>
+              <MenuComponent menuItems={menuItems} />
             </CardContent>
           </Card>
         )}
@@ -397,6 +450,20 @@ const VideoCard = ({
             </Button>
           </span>
         </div>
+      )}
+      <ConfirmationDialog
+        open={confirmationOpen}
+        onClose={handleClose}
+        onConfirm={handleConfirm}
+        title="Login Required"
+        message="You need to login to add this video to your playlist. Do you want to proceed to login?"
+      />
+      {addToPlaylistOpen && (
+        <AddToPlaylistDialog
+          open={addToPlaylistOpen}
+          onClose={() => setAddToPlaylistOpen(false)}
+          videoId={videoId}
+        />
       )}
     </div>
   );

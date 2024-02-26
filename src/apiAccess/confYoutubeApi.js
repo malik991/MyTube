@@ -217,6 +217,25 @@ export class DBServices {
       throw error?.message;
     }
   }
+  async getUserPlaylist(page = 1) {
+    try {
+      let url = `/playlist/check-user-playlist`;
+      const queryParams = new URLSearchParams({
+        page: page.toString(), // Convert page to string
+      });
+      url += `?${queryParams.toString()}`;
+      const res = await axiosInstance.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      //console.log("data in slice: ", res.data.data);
+      return res.data?.data;
+    } catch (error) {
+      console.error("Error in get user's playlist :: ", error);
+      throw error;
+    }
+  }
   // update playlist
   async updatePlaylist({ name, description }, playlistId) {
     try {
@@ -259,7 +278,7 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error in add video into playlist :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
 
