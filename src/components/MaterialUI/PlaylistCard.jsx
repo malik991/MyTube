@@ -28,9 +28,7 @@ import CustomSnackbar from "../CustomSnackbar";
 import DialogForm from "./DialogForm";
 
 const PlaylistCard = ({ loading }) => {
-  const { userPlayLists, status, error, totalPages } = useSelector(
-    (state) => state.playlist
-  );
+  const { userPlayLists, totalPages } = useSelector((state) => state.playlist);
   const { message } = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +39,7 @@ const PlaylistCard = ({ loading }) => {
   const [cusError, setCusError] = useState("");
   const [circularLoading, setCircularLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [loadPlaylist, setLoadPlaylist] = useState(null);
 
   const [checkedState, setCheckedState] = useState({});
   const handleCheckboxChange = (event, playlistId) => {
@@ -92,6 +91,13 @@ const PlaylistCard = ({ loading }) => {
     } finally {
       setCircularLoading(false);
       handleCloseDeleteDialog();
+    }
+  };
+
+  const handleEditPlayList = async (playlist) => {
+    if (playlist) {
+      setLoadPlaylist(playlist);
+      setFormDialogOpen(true);
     }
   };
 
@@ -168,7 +174,10 @@ const PlaylistCard = ({ loading }) => {
                   />
                   {checkedState[playlist._id] && (
                     <div className="edit-delete-icons">
-                      <IconButton aria-label="edit">
+                      <IconButton
+                        aria-label="edit"
+                        onClick={() => handleEditPlayList(playlist)}
+                      >
                         <EditIcon />
                       </IconButton>
                       <IconButton
@@ -263,9 +272,13 @@ const PlaylistCard = ({ loading }) => {
       {/* {console.log("refresh: ", refreshPlaylist)} */}
       <DialogForm
         open={formDialogOpen}
-        handleClose={() => setFormDialogOpen(false)}
+        handleClose={() => {
+          setFormDialogOpen(false);
+          setLoadPlaylist(null);
+        }}
         //onSuccess={() => setRefreshPlaylist((prevState) => !prevState)}
         onSuccess={onSuccess}
+        initialData={loadPlaylist}
       />
     </>
   );

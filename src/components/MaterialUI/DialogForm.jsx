@@ -13,15 +13,40 @@ import Box from "@mui/material/Box";
 import axiosInstance from "../../config/axiosInstance";
 import CircularDeterminate from "./CircularProgress";
 
-export default function DialogForm({ open, handleClose, onSuccess }) {
-  const [isPublished, setIsPublished] = useState(false);
-  const [errorOccurred, setErrorOccurred] = useState(false); // New state to track if an error occurred
+export default function DialogForm({
+  open,
+  handleClose,
+  onSuccess,
+  initialData,
+}) {
+  //console.log("init: ", initialData);
+  const initialFormData = {
+    name: "",
+    description: "",
+    coverImage: null,
+    isPublished: false,
+  };
+  const [formData, setFormData] = useState({ ...initialFormData });
+
+  const [errorOccurred, setErrorOccurred] = useState(false);
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const handleSwitchChange = (event) => {
-    setIsPublished(event.target.checked);
+    setFormData((prevData) => ({
+      ...prevData,
+      isPublished: event.target.checked,
+    }));
+  };
+
+  const handleChange = (event) => {
+    const { name, value, files } = event.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value, // For file inputs, store the file itself
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -29,73 +54,97 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
     setLoading(true);
     setProgress(0);
     setApiError("");
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    //formJson.isPublished = isPublished;
-    //console.log("formJson: ", formJson);
-    formData.set("isPublished", isPublished ? "true" : "false");
-    // formData.forEach((value, key) => {
-    //   console.log(`${key}: ${value}`);
-    // });
 
-    // Simulate progress increment in intervals
+    // const formData = new FormData(event.currentTarget);
+    // const formJson = Object.fromEntries(formData.entries());
+    // //formJson.isPublished = isPublished;
+    // //console.log("formJson: ", formJson);
+    // formData.set("isPublished", isPublished ? "true" : "false");
+
+    const formDataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
+    });
+
+    formDataToSend.set("isPublished", formData.isPublished ? "true" : "false");
+
     const timer = setInterval(() => {
       setProgress((prevProgress) =>
         prevProgress >= 100 ? 100 : prevProgress + 10
       );
     }, 800);
+
     try {
-      if (!formJson.name) {
-        setApiError("play list name is mandatory");
+      if (!formData.name) {
+        setApiError("Playlist name is mandatory");
         return;
       }
-      const res = await axiosInstance.post(
-        `/playlist/create-play-list`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
 
-      clearInterval(timer); // Clear the interval
-
-      if (res) {
-        console.log(typeof onSuccess, onSuccess);
-        onSuccess(); // Call the success handler provided by the parent
-        handleClose();
+      let response;
+      if (initialData) {
+        response = await axiosInstance.post(
+          `/playlist/update-playlist/${initialData._id}`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        response = await axiosInstance.post(
+          `/playlist/create-play-list`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
       }
-      return res.data?.data;
+
+      clearInterval(timer);
+      if (response) {
+        onSuccess();
+        handleClose();
+        setFormData({ ...initialFormData });
+      }
+      return response.data?.data;
     } catch (error) {
       console.log("error in dialog form: ", error);
-      setApiError(error.response?.data?.message || "error not recieved");
+      setApiError(error.response?.data?.message || "Error not received");
       setErrorOccurred(true);
     } finally {
-      setIsPublished(false);
       setLoading(false);
       setProgress(0);
     }
   };
 
-  // Close the dialog only when there's no error or when the dialog is closed by the user
   useEffect(() => {
     if (open && errorOccurred && !loading) {
-      setLoading(false); // Reset loading state if there's an error
-      setErrorOccurred(false); // Reset errorOccurred state
+      setLoading(false);
+      setErrorOccurred(false);
     }
-  }, [open, errorOccurred, loading]);
+
+    if (initialData) {
+      setFormData({ ...initialData });
+    } else {
+      setFormData({ ...initialFormData });
+    }
+  }, [open, errorOccurred, loading, initialData]);
 
   const cusHandleClose = () => {
     setApiError("");
-    setIsPublished(false);
     handleClose();
   };
+
   return (
     <React.Fragment>
       <Dialog open={open} onClose={handleClose}>
         <form onSubmit={handleSubmit}>
-          <DialogTitle>Create PlayList</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Update Playlist" : "Create Playlist"}
+          </DialogTitle>
           <DialogContent
             style={{
               display: "flex",
@@ -106,13 +155,12 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
             {loading > 0 ? (
               <Box display="flex" justifyContent="center">
                 <CircularDeterminate variant="determinate" value={progress} />
-                {/* <CircularProgress /> */}
               </Box>
             ) : (
               <>
                 <DialogContentText>
                   This is your personal playlist where you can add videos and if
-                  you want you can publish your PlayList also.
+                  you want you can publish your Playlist also.
                 </DialogContentText>
                 {apiError && (
                   <p style={{ color: "red", textAlign: "center" }}>
@@ -137,9 +185,11 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
                       type="text"
                       variant="outlined"
                       margin="dense"
-                      error={true}
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      error={!formData.name}
                       errorMessage={"Title mandatory"}
-                      required={true}
                     />
                   </Box>
                   <Box sx={{ display: "block", my: 2 }}>
@@ -152,6 +202,8 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
                       margin="dense"
                       multiline
                       rows={4}
+                      value={formData.description}
+                      onChange={handleChange}
                     />
                   </Box>
                   <Box sx={{ display: "block" }}>
@@ -162,17 +214,15 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
                       name="coverImage"
                       variant="outlined"
                       margin="dense"
-                      error={false}
-                      errorMessage=""
+                      onChange={handleChange}
                       accept="image/*"
                     />
                   </Box>
                   <FormControlLabel
                     control={
                       <Switch
-                        checked={isPublished}
+                        checked={formData.isPublished}
                         onChange={handleSwitchChange}
-                        id="name"
                         name="isPublished"
                       />
                     }
@@ -185,7 +235,7 @@ export default function DialogForm({ open, handleClose, onSuccess }) {
           {!loading && (
             <DialogActions>
               <Button onClick={cusHandleClose}>Cancel</Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit">{initialData ? "Update" : "Submit"}</Button>
             </DialogActions>
           )}
         </form>

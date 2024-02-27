@@ -8,6 +8,7 @@ export default function CustomInputField({
   required,
   error,
   errorMessage,
+  onChange,
   ...props
 }) {
   return (
@@ -19,6 +20,7 @@ export default function CustomInputField({
       error={error}
       helperText={errorMessage}
       margin="dense"
+      onChange={onChange}
       {...props}
     />
   );
