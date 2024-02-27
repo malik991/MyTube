@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { VideoCard, Container, Button } from "../components";
 import { getWatchHistory } from "../apiAccess/auth";
+import { useSelector, useDispatch } from "react-redux";
+import { closeSnackbar } from "../store/snackbarSlice";
+import CustomSnackbar from "../components/CustomSnackbar";
 
 function Home({ isWatchHistory }) {
   const [getVideos, setVideos] = useState([]);
@@ -10,6 +13,8 @@ function Home({ isWatchHistory }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [btnClicked, setBtnClicked] = useState(false);
+  const { message } = useSelector((state) => state.snackbar);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData(currentPage);
@@ -37,6 +42,10 @@ function Home({ isWatchHistory }) {
     }
   };
 
+  const handleClose = () => {
+    dispatch(closeSnackbar());
+  };
+
   const handlePageChange = (newPage) => {
     setBtnClicked(true);
     if (newPage >= 1 && newPage <= totalPages) {
@@ -61,6 +70,11 @@ function Home({ isWatchHistory }) {
   return (
     <div className="w-full py-8">
       <h1>Total Videos: {getTotalVideos}</h1>
+      {message && (
+        <div className=" flex justify-center items-center py-2">
+          <CustomSnackbar handleClose={handleClose} />
+        </div>
+      )}
       <Container>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {rearrangedVideos.map((video) => (

@@ -8,16 +8,17 @@ import DialogTitle from "@mui/material/DialogTitle";
 import CustomInputField from "./CustomInputField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 //import { useSelector, useDispatch } from "react-redux";
 import axiosInstance from "../../config/axiosInstance";
+import CircularDeterminate from "./CircularProgress";
 
-export default function FormDialog({ open, handleClose, onSuccess }) {
+export default function DialogForm({ open, handleClose, onSuccess }) {
   const [isPublished, setIsPublished] = useState(false);
   const [errorOccurred, setErrorOccurred] = useState(false); // New state to track if an error occurred
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleSwitchChange = (event) => {
     setIsPublished(event.target.checked);
@@ -26,6 +27,7 @@ export default function FormDialog({ open, handleClose, onSuccess }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setProgress(0);
     setApiError("");
     const formData = new FormData(event.currentTarget);
     const formJson = Object.fromEntries(formData.entries());
@@ -36,6 +38,12 @@ export default function FormDialog({ open, handleClose, onSuccess }) {
     //   console.log(`${key}: ${value}`);
     // });
 
+    // Simulate progress increment in intervals
+    const timer = setInterval(() => {
+      setProgress((prevProgress) =>
+        prevProgress >= 100 ? 100 : prevProgress + 10
+      );
+    }, 800);
     try {
       if (!formJson.name) {
         setApiError("play list name is mandatory");
@@ -50,8 +58,11 @@ export default function FormDialog({ open, handleClose, onSuccess }) {
           },
         }
       );
+
+      clearInterval(timer); // Clear the interval
+
       if (res) {
-        setIsPublished(false);
+        console.log(typeof onSuccess, onSuccess);
         onSuccess(); // Call the success handler provided by the parent
         handleClose();
       }
@@ -61,7 +72,9 @@ export default function FormDialog({ open, handleClose, onSuccess }) {
       setApiError(error.response?.data?.message || "error not recieved");
       setErrorOccurred(true);
     } finally {
+      setIsPublished(false);
       setLoading(false);
+      setProgress(0);
     }
   };
 
@@ -90,9 +103,10 @@ export default function FormDialog({ open, handleClose, onSuccess }) {
               alignItems: "center",
             }}
           >
-            {loading ? (
+            {loading > 0 ? (
               <Box display="flex" justifyContent="center">
-                <CircularProgress />
+                <CircularDeterminate variant="determinate" value={progress} />
+                {/* <CircularProgress /> */}
               </Box>
             ) : (
               <>

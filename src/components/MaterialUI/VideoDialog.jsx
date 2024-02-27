@@ -13,7 +13,7 @@ import AvTimerIcon from "@mui/icons-material/AvTimer";
 
 const VideoDialog = ({ open, handleClose, playlist }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const videosPerPage = 2;
+  const videosPerPage = 3;
   const totalPages = Math.ceil(playlist?.videos?.length / videosPerPage);
   const startIndex = (currentPage - 1) * videosPerPage;
   const endIndex = startIndex + videosPerPage;

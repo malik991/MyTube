@@ -7,7 +7,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { addWatchHistory } from "../apiAccess/auth";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { InputField, Button } from "../components";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -28,6 +28,8 @@ import DownloadIcon from "@mui/icons-material/Download";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
 import ConfirmationDialog from "./MaterialUI/ConfirmationDialog";
 import AddToPlaylistDialog from "./MaterialUI/AddToPlaylistDialog";
+import { closeSnackbar } from "../store/snackbarSlice";
+import CustomSnackbar from "./CustomSnackbar";
 const VideoCard = ({
   thumbnail,
   videoFile,
@@ -54,6 +56,8 @@ const VideoCard = ({
   const [likedBtn, setLikedBtn] = useState(false);
   const [deleteBtn, setDeleteBtn] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
+  const { message } = useSelector((state) => state.snackbar);
+  const dispatch = useDispatch();
 
   const [hovered, setHovered] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
@@ -223,7 +227,7 @@ const VideoCard = ({
   const handleAddToPlaylist = () => {
     // Logic to add video to playlist
     if (authStatus) {
-      console.log("Video added to playlist");
+      //console.log("Video added to playlist");
       setAddToPlaylistOpen(true);
     } else {
       setConfirmationOpen(true);
@@ -233,6 +237,10 @@ const VideoCard = ({
   const handleOtherAction = () => {
     // Other action logic
     console.log("Other action executed");
+  };
+
+  const handleCloseSnackBar = () => {
+    dispatch(closeSnackbar());
   };
 
   const menuItems = [
@@ -274,6 +282,11 @@ const VideoCard = ({
         // onClick={handleVideoClick}
         className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
       >
+        {message && (
+          <div className=" flex justify-center items-center py-2">
+            <CustomSnackbar handleClose={handleCloseSnackBar} />
+          </div>
+        )}
         {isExpanded ? (
           <>
             <video className="w-full h-auto" controls>

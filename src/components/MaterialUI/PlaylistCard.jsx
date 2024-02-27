@@ -17,7 +17,6 @@ import VideoDialog from "./VideoDialog";
 import SkeletonVariants from "./Skeleton";
 import DividerText from "./DividerWithText";
 import CustomeIcons from "./AddCircleIcon";
-import FormDialog from "./DialogForm";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dbServiceObj from "../../apiAccess/confYoutubeApi";
@@ -26,6 +25,7 @@ import Box from "@mui/material/Box";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { openSnackbar, closeSnackbar } from "../../store/snackbarSlice";
 import CustomSnackbar from "../CustomSnackbar";
+import DialogForm from "./DialogForm";
 
 const PlaylistCard = ({ loading }) => {
   const { userPlayLists, status, error, totalPages } = useSelector(
@@ -110,8 +110,8 @@ const PlaylistCard = ({ loading }) => {
     }
   };
 
-  const handleFormSubmitSuccess = () => {
-    //console.log("submit sucess");
+  const onSuccess = () => {
+    // console.log("submit sucess");
     setRefreshPlaylist((prevState) => !prevState); // Toggle the state to trigger useEffect
   };
 
@@ -260,10 +260,12 @@ const PlaylistCard = ({ loading }) => {
         handleClose={() => setDialogOpen(false)}
         playlist={selectedPlaylist}
       />
-      <FormDialog
+      {/* {console.log("refresh: ", refreshPlaylist)} */}
+      <DialogForm
         open={formDialogOpen}
         handleClose={() => setFormDialogOpen(false)}
-        onSuccess={handleFormSubmitSuccess}
+        //onSuccess={() => setRefreshPlaylist((prevState) => !prevState)}
+        onSuccess={onSuccess}
       />
     </>
   );
