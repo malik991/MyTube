@@ -310,13 +310,19 @@ export class DBServices {
       if (!videoId || !playlistId) {
         return "Playlist Id and video id is mendatory";
       }
-      const res = await axios.delete(
-        `${conf.ServerUrl}/playlist/deleted-from-playlist/${videoId}/${playlistId}`
+      const res = await axiosInstance.delete(
+        `/playlist/deleted-from-playlist/${videoId}/${playlistId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       return res;
     } catch (error) {
       console.error("Error in deleting video from playlist :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
 

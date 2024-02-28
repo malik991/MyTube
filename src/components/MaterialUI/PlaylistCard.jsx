@@ -28,7 +28,8 @@ import CustomSnackbar from "../CustomSnackbar";
 import DialogForm from "./DialogForm";
 
 const PlaylistCard = ({ loading }) => {
-  const { userPlayLists, totalPages } = useSelector((state) => state.playlist);
+  //const { userPlayLists, totalPages } = useSelector((state) => state.playlist);
+
   const { message } = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -40,6 +41,8 @@ const PlaylistCard = ({ loading }) => {
   const [circularLoading, setCircularLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [loadPlaylist, setLoadPlaylist] = useState(null);
+  const [fetchedUserPlayLists, setFetchedUserPlayLists] = useState([]);
+  const [fetchedTotalPages, setFetchedTotalPages] = useState(0);
 
   const [checkedState, setCheckedState] = useState({});
   const handleCheckboxChange = (event, playlistId) => {
@@ -55,11 +58,15 @@ const PlaylistCard = ({ loading }) => {
   }, [currentPage, refreshPlaylist, circularLoading]);
 
   const fetchData = async (page) => {
-    try {
-      dispatch(fetchPlayLists(page));
-    } catch (error) {
-      console.log("Error in PlayList card: ", error);
-    }
+    dispatch(fetchPlayLists(page)) // Start fetching playlists
+      .then((response) => {
+        //console.log("Playlists fetched successfully: ", response.payload.docs);
+        setFetchedUserPlayLists(response.payload.docs);
+        setFetchedTotalPages(response.payload.totalPages);
+      })
+      .catch((error) => {
+        console.log("Error in fetching playlists: ", error);
+      });
   };
 
   const handleCardClick = (playlist) => {
@@ -111,14 +118,15 @@ const PlaylistCard = ({ loading }) => {
   };
 
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
+    if (newPage >= 1 && newPage <= fetchedTotalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  const onSuccess = () => {
-    // console.log("submit sucess");
+  const onSuccess = async () => {
     setRefreshPlaylist((prevState) => !prevState); // Toggle the state to trigger useEffect
+    // await fetchData(currentPage); // Fetch updated playlist data
+    //console.log("submit sucess: ", fetchedUserPlayLists);
   };
 
   return (
@@ -144,7 +152,8 @@ const PlaylistCard = ({ loading }) => {
             {cusError && (
               <p style={{ color: "red", textAlign: "center" }}>{cusError}</p>
             )}
-            {userPlayLists?.docs?.map((playlist) => (
+
+            {fetchedUserPlayLists?.map((playlist) => (
               <div
                 className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
                 key={playlist._id}
@@ -178,13 +187,15 @@ const PlaylistCard = ({ loading }) => {
                         aria-label="edit"
                         onClick={() => handleEditPlayList(playlist)}
                       >
-                        <EditIcon />
+                        <EditIcon style={{ color: "red", fontSize: "32px" }} />
                       </IconButton>
                       <IconButton
                         aria-label="delete"
                         onClick={handleOpenDeleteDialog}
                       >
-                        <DeleteIcon />
+                        <DeleteIcon
+                          style={{ color: "red", fontSize: "32px" }}
+                        />
                       </IconButton>
                       <ConfirmationDialog
                         open={openDeleteDialog}
@@ -254,9 +265,9 @@ const PlaylistCard = ({ loading }) => {
         </>
       )}
       <div className="flex justify-center mt-4">
-        {totalPages > 1 && (
+        {fetchedTotalPages > 1 && (
           <Pagination
-            count={totalPages}
+            count={fetchedTotalPages}
             page={currentPage}
             size="large"
             color="secondary"
@@ -266,8 +277,12 @@ const PlaylistCard = ({ loading }) => {
       </div>
       <VideoDialog
         open={dialogOpen}
-        handleClose={() => setDialogOpen(false)}
+        handleClose={() => {
+          setDialogOpen(false);
+          setSelectedPlaylist(null);
+        }}
         playlist={selectedPlaylist}
+        onSuccess={onSuccess}
       />
       {/* {console.log("refresh: ", refreshPlaylist)} */}
       <DialogForm

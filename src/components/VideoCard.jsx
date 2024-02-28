@@ -282,13 +282,13 @@ const VideoCard = ({
         // onClick={handleVideoClick}
         className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
       >
-        {message && (
-          <div className=" flex justify-center items-center py-2">
-            <CustomSnackbar handleClose={handleCloseSnackBar} />
-          </div>
-        )}
         {isExpanded ? (
           <>
+            {message && (
+              <div className=" flex justify-center items-center py-2">
+                <CustomSnackbar handleClose={handleCloseSnackBar} />
+              </div>
+            )}
             <video className="w-full h-auto" controls>
               <source src={videoFile} type="video/mp4" />
               Your browser does not support the video tag.
