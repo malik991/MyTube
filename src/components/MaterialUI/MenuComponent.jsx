@@ -40,7 +40,7 @@ export default function MenuComponent({ menuItems }) {
               handleClose();
               item.onClick();
             }}
-            className="flex items-center"
+            style={{ display: "flex", alignItems: "center" }}
           >
             {item.icon}
             <span className="ml-2">{item.label}</span>

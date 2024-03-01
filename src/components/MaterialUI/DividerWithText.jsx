@@ -24,3 +24,13 @@ export default function DividerText({ text }) {
     </Root>
   );
 }
+
+export function SimpleDividerLine({ labelText }) {
+  return (
+    <Root>
+      <Divider>
+        <Chip label={labelText} size="small" />
+      </Divider>
+    </Root>
+  );
+}

@@ -20,7 +20,8 @@ import {
   CardMedia,
   Typography,
   Avatar,
-  IconButton,
+  CardHeader,
+  Grid,
 } from "@mui/material";
 import MenuComponent from "./MaterialUI/MenuComponent";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
@@ -30,12 +31,14 @@ import ConfirmationDialog from "./MaterialUI/ConfirmationDialog";
 import AddToPlaylistDialog from "./MaterialUI/AddToPlaylistDialog";
 import { closeSnackbar } from "../store/snackbarSlice";
 import CustomSnackbar from "./CustomSnackbar";
+import { BootstrapTooltips } from "./MaterialUI/CustomizedTooltips";
 const VideoCard = ({
   thumbnail,
   videoFile,
   duration,
   views,
   title,
+  description,
   Comments,
   fullName,
   ownerAvatar,
@@ -278,10 +281,7 @@ const VideoCard = ({
       ref={videoRef}
       className={`relative ${isExpanded ? "col-span-full" : "col-span-1"}`}
     >
-      <div
-        // onClick={handleVideoClick}
-        className="relative group overflow-hidden transition duration-300 transform hover:scale-105"
-      >
+      <div>
         {isExpanded ? (
           <>
             {message && (
@@ -390,19 +390,8 @@ const VideoCard = ({
             </div>
           </>
         ) : (
-          <Card>
-            <CardContent className="">
-              <Typography
-                variant="subtitle1"
-                color="textPrimary"
-                component="div"
-              >
-                <h2 className="text-black text-lg font-semibold from-stone-100 font-serif">
-                  Title: {title}
-                </h2>
-              </Typography>
-            </CardContent>
-            <CardActionArea>
+          <Card className="relative group overflow-hidden transition duration-300 transform hover:scale-105">
+            <CardActionArea onClick={(e) => handleVideoClick(e)}>
               <CardMedia
                 className="w-full h-60 object-cover"
                 component="img"
@@ -410,7 +399,6 @@ const VideoCard = ({
                 height="140"
                 image={thumbnail}
                 title="Video Thumbnail"
-                onClick={(e) => handleVideoClick(e)}
               />
               <CardContent className="bg-gray-100">
                 <Typography variant="body2" color="textSecondary" component="p">
@@ -422,27 +410,88 @@ const VideoCard = ({
               </CardContent>
             </CardActionArea>
             <CardContent className="bg-gray-100">
-              <Typography variant="body2" color="textSecondary" component="p">
-                Creator:
-              </Typography>
-              <Avatar
-                src={ownerAvatar}
-                alt="Owner Avatar"
-                sx={{ width: 40, height: 40 }}
-              />
-              <Typography variant="body2" color="textSecondary" component="p">
-                <a
-                  className="text-xl font-semibold text-purple-500 underline"
-                  href={`/channel?channelname=${channelName}`}
-                >
-                  Visit @{channelName}
-                </a>
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                {fullName}
-              </Typography>
-              <MenuComponent menuItems={menuItems} />
+              <Grid container alignItems={"center"}>
+                <Grid item xs={12} sm={true} md={true} lg={true}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    sx={{ marginBottom: "4px" }}
+                  >
+                    <a
+                      className="text-xl font-semibold text-purple-500 underline"
+                      href={`/channel?channelname=${channelName}`}
+                    >
+                      Visit @{channelName}
+                    </a>
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                alignItems="center"
+                justifyContent={"space-between"}
+              >
+                <Grid item>
+                  <Avatar
+                    src={ownerAvatar}
+                    alt="Owner Avatar"
+                    sx={{ width: 40, height: 40, marginRight: "8px" }}
+                  />
+                </Grid>
+
+                <Grid item>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                    sx={{ marginBottom: "4px", marginLeft: "8px" }}
+                  >
+                    {fullName}
+                  </Typography>
+                </Grid>
+                <BootstrapTooltips title="add to playlist">
+                  <Grid item>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                      sx={{ marginBottom: "4px", marginLeft: "8px" }}
+                    >
+                      <MenuComponent menuItems={menuItems} />
+                    </Typography>
+                  </Grid>
+                </BootstrapTooltips>
+              </Grid>
             </CardContent>
+            <CardHeader
+              title={
+                <Typography
+                  //variant="h4"
+                  component="div"
+                  sx={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: "text-black",
+                    fontSize: "1.25rem", // equivalent to text-lg
+                    fontWeight: "bold", // equivalent to font-semibold
+                    fontFamily: "from-stone-100",
+                  }}
+                  //className="text-black font-semibold from-stone-100 font-serif"
+                >
+                  <span>Title: {title}</span>
+                </Typography>
+              }
+              subheader={
+                <Typography variant="body1" color="textSecondary" component="p">
+                  {/* Your description goes here */}
+                  Description:{" "}
+                  {description.length > 30
+                    ? description.substring(0, 30) + "..."
+                    : description}
+                </Typography>
+              }
+            />
           </Card>
         )}
       </div>

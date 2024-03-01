@@ -8,6 +8,7 @@ import CustomSnackbar from "../components/CustomSnackbar";
 
 function Home({ isWatchHistory }) {
   const [getVideos, setVideos] = useState([]);
+  const [error, setError] = useState("");
   const [getTotalVideos, setTotalVideos] = useState(null);
   const [expandedVideo, setExpandedVideo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +23,7 @@ function Home({ isWatchHistory }) {
 
   const fetchData = async (page) => {
     try {
+      setError("");
       if (expandedVideo) {
         //console.log("fetch data");
         setExpandedVideo(null); // to remove the expanded video from next page
@@ -39,6 +41,7 @@ function Home({ isWatchHistory }) {
       setTotalPages(totalPages);
     } catch (error) {
       console.log("Error fetching videos:", error);
+      setError(error);
     }
   };
 
@@ -69,60 +72,69 @@ function Home({ isWatchHistory }) {
 
   return (
     <div className="w-full py-8">
-      <h1>Total Videos: {getTotalVideos}</h1>
-      {message && (
-        <div className=" flex justify-center items-center py-2">
-          <CustomSnackbar handleClose={handleClose} />
-        </div>
+      {error ? (
+        <p className="text-red-600 mt-8 text-center">{error}</p>
+      ) : (
+        <>
+          <h1 className="mb-4 text-red-500 font-serif font-semibold">
+            Total Videos: {getTotalVideos}
+          </h1>
+          {message && (
+            <div className="flex justify-center items-center py-2">
+              <CustomSnackbar handleClose={handleClose} />
+            </div>
+          )}
+          <Container>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {rearrangedVideos.map((video) => (
+                <VideoCard
+                  key={video.uniqueKey || video.videoFile}
+                  thumbnail={video.thumbNail}
+                  videoFile={video.videoFile}
+                  duration={video.duration}
+                  views={video.views}
+                  title={video.title}
+                  description={video.description}
+                  Comments={video.totalComments}
+                  Likes={video.totalLikes}
+                  videoId={video._id}
+                  fullName={video.owner.fullName}
+                  ownerAvatar={video.owner.avatar}
+                  channelName={video.owner.userName}
+                  isExpanded={expandedVideo === video.videoFile}
+                  setExpandedVideo={setExpandedVideo}
+                />
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-4">
+                <Button
+                  className={`px-4 py-2 mx-2 ${
+                    btnClicked && currentPage !== 1
+                      ? "bg-red-600 text-white text-lg"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
+                  }`}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <Button
+                  className={`px-4 py-2 mx-2 ${
+                    currentPage === totalPages
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
+                      : "bg-blue-600 text-white text-lg"
+                  }`}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next -{`>`}
+                </Button>
+              </div>
+            )}
+          </Container>
+        </>
       )}
-      <Container>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {rearrangedVideos.map((video) => (
-            <VideoCard
-              key={video.uniqueKey || video.videoFile}
-              thumbnail={video.thumbNail}
-              videoFile={video.videoFile}
-              duration={video.duration}
-              views={video.views}
-              title={video.title}
-              Comments={video.totalComments}
-              Likes={video.totalLikes}
-              videoId={video._id}
-              fullName={video.owner.fullName}
-              ownerAvatar={video.owner.avatar}
-              channelName={video.owner.userName}
-              isExpanded={expandedVideo === video.videoFile} // if expen equal to videoFile
-              setExpandedVideo={setExpandedVideo}
-            />
-          ))}
-        </div>
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-4">
-            <Button
-              className={`px-4 py-2 mx-2 ${
-                btnClicked && currentPage !== 1
-                  ? "bg-red-600 text-white text-lg"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
-              }`}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              className={`px-4 py-2 mx-2 ${
-                currentPage === totalPages
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
-                  : "bg-blue-600 text-white text-lg"
-              }`}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next -{`>`}
-            </Button>
-          </div>
-        )}
-      </Container>
     </div>
   );
 }

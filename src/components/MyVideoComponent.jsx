@@ -33,7 +33,7 @@ export const MyVideoComponent = ({ channelId }) => {
       setVideos(docs);
       setTotalVideos(totalDocs);
       setTotalPages(totalPages);
-      setChannleName(response.data.data?.docs[0].owner?.userName);
+      setChannleName(response.data.data?.docs[0]?.owner?.userName);
     } catch (error) {
       console.log("Error fetching videos:", error);
     }
@@ -76,7 +76,9 @@ export const MyVideoComponent = ({ channelId }) => {
         </Container>
       ) : (
         <>
-          <h1>Total Videos: {getTotalVideos}</h1>
+          <h1 className="mb-4 text-red-500 font-serif font-semibold">
+            Total Videos: {getTotalVideos}
+          </h1>
           <Container>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {rearrangedVideos.map((video) => (
@@ -87,6 +89,7 @@ export const MyVideoComponent = ({ channelId }) => {
                   duration={video.duration}
                   views={video.views}
                   title={video.title}
+                  description={video.description}
                   Comments={video.totalComments}
                   Likes={video.totalLikes}
                   videoId={video._id}

@@ -1,6 +1,6 @@
 import AccountMenu from "../AccountMenu.jsx";
-import React, { useState, useEffect } from "react";
-import { Logo, Container, CustomDropdown } from "../index.js"; // Assuming these are your custom components
+import React, { useState } from "react";
+import { Logo, Container } from "../index.js"; // Assuming these are your custom components
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { persistor } from "../../store/store";
@@ -10,13 +10,16 @@ import { logout } from "../../store/authSlice";
 import { closeSnackbar } from "../../store/snackbarSlice";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import SwipeableTemporaryDrawer from "../MaterialUI/MainMenueMUI.jsx";
-import Tooltip from "@mui/material/Tooltip";
 import { logOut as playListLogout } from "../../store/playListSlice.js";
+import { BootstrapTooltips } from "../MaterialUI/CustomizedTooltips.jsx";
+import ScreenSearchDesktopTwoToneIcon from "@mui/icons-material/ScreenSearchDesktopTwoTone";
+import SearchVideos from "../MaterialUI/searchComponent.jsx";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchVideo, setSearchVideo] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,6 +40,16 @@ function Header() {
 
   const handleNavLinkClick = () => {
     setIsDrawerOpen(true);
+  };
+
+  const openSearchDialog = () => {
+    setSearchVideo(true);
+    // console.log("open: ", searchVideo);
+  };
+
+  const handleCloseSearchDialog = () => {
+    setSearchVideo(false);
+    //console.log("close called: ", searchVideo);
   };
 
   // const options = [
@@ -86,14 +99,31 @@ function Header() {
               <Link to="/">
                 <Logo className="w-10 h-auto" />
               </Link>
+              <BootstrapTooltips
+                title={"video search by title and description"}
+              >
+                <ScreenSearchDesktopTwoToneIcon
+                  className="cursor-pointer text-gray-700 hover:text-red-700"
+                  fontSize="large"
+                  onClick={openSearchDialog}
+                />
+              </BootstrapTooltips>
+              {searchVideo && (
+                <SearchVideos
+                  open={searchVideo}
+                  handleClose={handleCloseSearchDialog}
+                />
+              )}
               {authStatus && (
-                <Tooltip title="Menu">
-                  <WidgetsIcon
-                    className="cursor-pointer text-gray-700 hover:text-gray-900"
-                    onClick={handleNavLinkClick}
-                    fontSize="large"
-                  />
-                </Tooltip>
+                <>
+                  <BootstrapTooltips title="Menu">
+                    <WidgetsIcon
+                      className="cursor-pointer text-gray-700 hover:text-red-700"
+                      onClick={handleNavLinkClick}
+                      fontSize="large"
+                    />
+                  </BootstrapTooltips>
+                </>
               )}
             </div>
             <ul className="flex ml-auto">

@@ -68,14 +68,17 @@ export class DBServices {
     sortBy = "createdAt",
     sortType = "desc",
     userId = null,
-    page = 1
+    page = 1,
+    query = ""
   ) {
     try {
+      //console.log("quer: ", query);
       let url = `${conf.ServerUrl}/videos/get-all-videos`;
       // Construct query parameters
       const queryParams = new URLSearchParams({
         sortBy,
         sortType,
+        query,
         page: page.toString(), // Convert page to string
       });
       // Append userId to the URL only if it's provided
