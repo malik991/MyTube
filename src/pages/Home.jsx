@@ -5,6 +5,7 @@ import { getWatchHistory } from "../apiAccess/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { closeSnackbar } from "../store/snackbarSlice";
 import CustomSnackbar from "../components/CustomSnackbar";
+import CheckboxComponent from "../components/MaterialUI/CheckboxComponent";
 
 function Home({ isWatchHistory }) {
   const [getVideos, setVideos] = useState([]);
@@ -14,12 +15,14 @@ function Home({ isWatchHistory }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [btnClicked, setBtnClicked] = useState(false);
+  const [sortByTitle, setSortByTitle] = useState(null);
+  const [sortAscending, setSortAscending] = useState(true);
   const { message } = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
 
   useEffect(() => {
     fetchData(currentPage);
-  }, [currentPage, isWatchHistory]);
+  }, [currentPage, isWatchHistory, sortAscending, sortByTitle]);
 
   const fetchData = async (page) => {
     try {
@@ -30,7 +33,12 @@ function Home({ isWatchHistory }) {
       }
       const response = isWatchHistory
         ? await getWatchHistory(page)
-        : await dbServiceObj.getAllVideos("title", "desc", null, page);
+        : await dbServiceObj.getAllVideos(
+            sortByTitle,
+            sortAscending,
+            null,
+            page
+          );
       const { docs, totalDocs, totalPages } = response.data.data;
       //console.log("data check: ", response.data.data.docs[0].owner.fullName);
       // console.log(
@@ -76,9 +84,31 @@ function Home({ isWatchHistory }) {
         <p className="text-red-600 mt-8 text-center">{error}</p>
       ) : (
         <>
-          <h1 className="mb-4 text-red-500 font-serif font-semibold">
-            Total Videos: {getTotalVideos}
-          </h1>
+          <div className="py-4">
+            {getVideos.length > 0 && (
+              <>
+                <h1 className="mb-4 text-red-500 font-serif font-semibold">
+                  Total Videos: {getTotalVideos}
+                </h1>
+                <div className="flex justify-end items-center">
+                  <CheckboxComponent
+                    label="Sort by Title"
+                    checked={sortByTitle === "title"}
+                    onChange={(event) =>
+                      setSortByTitle(event.target.checked ? "title" : null)
+                    }
+                    style={{ marginRight: "10px" }}
+                  />
+                  <CheckboxComponent
+                    label="Sort Ascending"
+                    checked={sortAscending}
+                    onChange={(event) => setSortAscending(event.target.checked)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
           {message && (
             <div className="flex justify-center items-center py-2">
               <CustomSnackbar handleClose={handleClose} />

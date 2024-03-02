@@ -483,7 +483,7 @@ const VideoCard = ({
                 </Typography>
               }
               subheader={
-                <Typography variant="body1" color="textSecondary" component="p">
+                <Typography variant="body1" color="textSecondary">
                   {/* Your description goes here */}
                   Description:{" "}
                   {description.length > 30

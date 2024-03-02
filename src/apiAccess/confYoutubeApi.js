@@ -65,8 +65,8 @@ export class DBServices {
     }
   }
   async getAllVideos(
-    sortBy = "createdAt",
-    sortType = "desc",
+    sortBy = null,
+    sortType = "",
     userId = null,
     page = 1,
     query = ""

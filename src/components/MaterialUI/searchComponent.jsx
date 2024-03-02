@@ -14,6 +14,7 @@ import dbServiceObj from "../../apiAccess/confYoutubeApi";
 import Pagination from "@mui/material/Pagination";
 import { VideoCard } from "../index";
 import { SimpleDividerLine } from "./DividerWithText";
+import CheckboxComponent from "./CheckboxComponent";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -67,10 +68,12 @@ export default function SearchVideos({ open, handleClose }) {
   const [expandedVideo, setExpandedVideo] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortByTitle, setSortByTitle] = useState(null);
+  const [sortAscending, setSortAscending] = useState(true);
 
   useEffect(() => {
     handleSearch(currentPage);
-  }, [currentPage]);
+  }, [currentPage, sortAscending, sortByTitle]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -81,7 +84,7 @@ export default function SearchVideos({ open, handleClose }) {
   // Function to handle search action
   const handleSearch = async (page) => {
     setApiError("");
-    //console.log("Search value:", searchValue); // Replace with your desired action
+    //console.log("asc:", sortAscending, " title: ", sortByTitle); // Replace with your desired action
     if (expandedVideo) {
       //console.log("fetch data");
       setExpandedVideo(null); // to remove the expanded video from next page
@@ -89,8 +92,8 @@ export default function SearchVideos({ open, handleClose }) {
     if (searchValue) {
       try {
         const res = await dbServiceObj.getAllVideos(
-          "title",
-          "desc",
+          sortByTitle,
+          sortAscending,
           null,
           page,
           searchValue
@@ -124,6 +127,11 @@ export default function SearchVideos({ open, handleClose }) {
     }
   };
 
+  const handleCloseCurrentPage = () => {
+    setCurrentPage(1);
+    handleClose();
+  };
+
   const rearrangedVideos = expandedVideo
     ? [
         {
@@ -147,6 +155,9 @@ export default function SearchVideos({ open, handleClose }) {
             noValidate
             // component="form"
             sx={{
+              border: "2px solid black",
+              borderRadius: 2,
+              padding: 3,
               display: "flex",
               flexDirection: "column",
               m: "auto",
@@ -167,7 +178,26 @@ export default function SearchVideos({ open, handleClose }) {
             </Search>
             <div className=" py-4">
               {getVideos.length > 0 && (
-                <SimpleDividerLine labelText="Search Result" />
+                <>
+                  <SimpleDividerLine labelText="Search Result" />
+                  <div className="flex justify-end items-center">
+                    <CheckboxComponent
+                      label="Sort by Title"
+                      checked={sortByTitle === "title"}
+                      onChange={(event) =>
+                        setSortByTitle(event.target.checked ? "title" : null)
+                      }
+                      style={{ marginRight: "10px" }}
+                    />
+                    <CheckboxComponent
+                      label="Sort Ascending"
+                      checked={sortAscending}
+                      onChange={(event) =>
+                        setSortAscending(event.target.checked)
+                      }
+                    />
+                  </div>
+                </>
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -194,7 +224,7 @@ export default function SearchVideos({ open, handleClose }) {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleCloseCurrentPage}>Cancel</Button>
         </DialogActions>
       </Dialog>
       {totalPages > 1 && (
