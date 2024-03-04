@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import CircularDeterminate from "./CircularProgress";
@@ -15,6 +14,7 @@ import Pagination from "@mui/material/Pagination";
 import { VideoCard } from "../index";
 import { SimpleDividerLine } from "./DividerWithText";
 import CheckboxComponent from "./CheckboxComponent";
+import { useLocation } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -59,10 +59,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchVideos({ open, handleClose }) {
-  // const [errorOccurred, setErrorOccurred] = useState(false);
   const [apiError, setApiError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  // const [loading, setLoading] = useState(false);
+  // const [progress, setProgress] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [getVideos, setVideos] = useState([]);
   const [expandedVideo, setExpandedVideo] = useState(null);
@@ -70,10 +69,25 @@ export default function SearchVideos({ open, handleClose }) {
   const [totalPages, setTotalPages] = useState(1);
   const [sortByTitle, setSortByTitle] = useState(null);
   const [sortAscending, setSortAscending] = useState(true);
+  const [prevLocation, setPrevLocation] = useState({ pathname: "" });
+  const location = useLocation();
 
   useEffect(() => {
+    if (prevLocation.pathname && prevLocation.pathname !== location.pathname) {
+      //console.log("enter");
+      setCurrentPage(1);
+      handleClose();
+    }
+
     handleSearch(currentPage);
-  }, [currentPage, sortAscending, sortByTitle]);
+    setPrevLocation(location);
+  }, [
+    currentPage,
+    sortAscending,
+    sortByTitle,
+    location.pathname,
+    prevLocation.pathname,
+  ]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {

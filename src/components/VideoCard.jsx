@@ -32,6 +32,8 @@ import AddToPlaylistDialog from "./MaterialUI/AddToPlaylistDialog";
 import { closeSnackbar } from "../store/snackbarSlice";
 import CustomSnackbar from "./CustomSnackbar";
 import { BootstrapTooltips } from "./MaterialUI/CustomizedTooltips";
+import CommentsAccordion from "./MaterialUI/CommentsAccordion";
+import Pagination from "@mui/material/Pagination";
 const VideoCard = ({
   thumbnail,
   videoFile,
@@ -55,7 +57,6 @@ const VideoCard = ({
   const [totalComment, setTotalComment] = useState("");
   const [videoLikes, setVideoLikes] = useState(0);
   const [btnClicked, setBtnClicked] = useState(false);
-  const [pageBtnClicked, setPageBtnClicked] = useState(false);
   const [likedBtn, setLikedBtn] = useState(false);
   const [deleteBtn, setDeleteBtn] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
@@ -80,6 +81,7 @@ const VideoCard = ({
   useEffect(() => {
     fetchData(currentPage); // Call the fetchData function when the component mounts
   }, [videoId, btnClicked, likedBtn, currentPage, deleteStatus]);
+
   const fetchData = async (page) => {
     try {
       if (videoId) {
@@ -89,6 +91,7 @@ const VideoCard = ({
         );
         const likesData = await dbServiceObj.getLikesByVideoId(videoId);
         //console.log("total like", likesData?.data?.data[0]?.totalLikes);
+
         setVideoComments(commentsData?.data?.data.docs || []);
         setVideoLikes(likesData?.data?.data[0]?.totalLikes || 0);
         const { totalDocs, totalPages } = commentsData.data.data;
@@ -101,7 +104,7 @@ const VideoCard = ({
   };
 
   const handlePageChange = (newPage) => {
-    setPageBtnClicked(true);
+    //setPageBtnClicked(true);
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
@@ -141,7 +144,7 @@ const VideoCard = ({
   };
 
   const handleCommentChange = (e) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     if (!authStatus) {
       alert("please login for enter comment");
     } else {
@@ -159,10 +162,13 @@ const VideoCard = ({
       const res = await dbServiceObj.addComment(userComment, videoId);
 
       if (res && res?.data) {
+        //console.log("res: ", res.data.data[0]?.owner?.fullName);
         const newComment = {
-          owner: res.data.owner,
+          owner: res.data.data[0]?.owner?.fullName,
+          avatar: res.data.data[0]?.owner?.avatar,
           content: userComment,
         };
+        //console.log("newCOmment: ", newComment);
         setVideoComments((prevComments) => [...prevComments, newComment]);
         setUserComment(""); // Clear the comment input field
       } else {
@@ -324,37 +330,23 @@ const VideoCard = ({
                   <MenuComponent menuItems={menuItems} />
                 </div>
               </div>
-              <div>
-                {videoComments.map((comment, index) => (
-                  <div key={index}>
-                    <strong>{comment.owner?.fullName}:</strong>{" "}
-                    {comment.content}
-                  </div>
-                ))}
+              <div className="pt-3 w-full flex flex-col justify-center items-center">
+                <div className="w-full max-w-xl">
+                  <h2 className="text-start text-lg font-serif text-red-500 font-semibold">
+                    Comments
+                  </h2>
+                  <CommentsAccordion commentsData={videoComments} />
+                </div>
+
                 {totalPages > 1 && (
                   <div className="flex justify-center mt-4">
-                    <Button
-                      className={`px-4 py-2 mx-2 ${
-                        pageBtnClicked && currentPage !== 1
-                          ? "bg-red-600 text-white text-lg"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
-                      }`}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      {`<-`}
-                    </Button>
-                    <Button
-                      className={`px-4 py-2 mx-2 ${
-                        currentPage === totalPages
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed text-lg"
-                          : "bg-blue-600 text-white text-lg"
-                      }`}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      {`>`}
-                    </Button>
+                    <Pagination
+                      count={totalPages}
+                      page={currentPage}
+                      size="large"
+                      color="secondary"
+                      onChange={(event, page) => handlePageChange(page)}
+                    />
                   </div>
                 )}
               </div>
@@ -402,10 +394,22 @@ const VideoCard = ({
               />
               <CardContent className="bg-gray-100">
                 <Typography variant="body2" color="textSecondary" component="p">
-                  {duration} <AvTimerIcon />
-                  {views} <VisibilityIcon />
-                  {Comments} <CommentIcon />
-                  {videoLikes} <ThumbUpOffAltIcon />
+                  <span>
+                    {duration}
+                    <AvTimerIcon />
+                  </span>
+                  <span className="ml-2">
+                    {views}
+                    <VisibilityIcon />
+                  </span>
+                  <span className="ml-2">
+                    {Comments}
+                    <CommentIcon />
+                  </span>
+                  <span className="ml-2">
+                    {videoLikes}
+                    <ThumbUpOffAltIcon />
+                  </span>
                 </Typography>
               </CardContent>
             </CardActionArea>

@@ -10,16 +10,12 @@ const axiosInstance = axios.create({
 // Function to refresh access token
 async function refreshAccessToken() {
   try {
-    // Make a request to your backend endpoint to refresh the access token
-    const response = await axiosInstance.get("/users/new-access-token", {
-      // Pass any necessary data (e.g., refresh token) in the request body
-    });
+    const response = await axiosInstance.get("/users/new-access-token", {});
     // Extract the new access token from the response
     const { accessToken } = response.data?.data;
     //console.log("response toekn axioinstance: ", accessToken);
     return accessToken;
   } catch (error) {
-    // Handle error
     throw error;
   }
 }
@@ -32,18 +28,6 @@ axiosInstance.interceptors.response.use(
   },
   async function (error) {
     const originalRequest = error.config;
-    //let errorJWT;
-    // if (error.response.status === 403) {
-    //   const serverErrorMessage = error.response?.data?.match(
-    //     /<pre>([\s\S]*?)<\/pre>/
-    //   )?.[1];
-
-    //   if (serverErrorMessage) {
-    //     const splitContent = serverErrorMessage?.split("<br>");
-    //     errorJWT = splitContent && splitContent[0].trim();
-    //     //setError(splitContent ? splitContent[0].trim() : "An error occurred");
-    //   }
-    // }
 
     if (error.response.status === 403 && !error.response.data.success) {
       try {

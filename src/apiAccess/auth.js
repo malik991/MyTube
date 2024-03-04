@@ -108,7 +108,7 @@ export const updateUserDetails = async ({ userName, email, fullName }) => {
     formData.append("email", email);
     formData.append("fullName", fullName);
     const res = await axiosInstance.patch(
-      `${conf.ServerUrl}/users/update-account-details`,
+      `/users/update-account-details`,
       formData,
       {
         headers: {
@@ -129,15 +129,11 @@ export const updateAvatar = async (avatar) => {
     //console.log("avatr: ", avatar);
     const formData = new FormData();
     formData.append("avatar", avatar);
-    const res = await axiosInstance.patch(
-      `${conf.ServerUrl}/users/update-avatar`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const res = await axiosInstance.patch(`/users/update-avatar`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return res;
   } catch (error) {
     console.error("Error in update user Avatar :: ", error);
