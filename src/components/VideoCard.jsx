@@ -335,7 +335,7 @@ const VideoCard = ({
                   <h2 className="text-start text-lg font-serif text-red-500 font-semibold">
                     Comments
                   </h2>
-                  <CommentsAccordion commentsData={videoComments} />
+                  <CommentsAccordion initialCommentsData={videoComments} />
                 </div>
 
                 {totalPages > 1 && (

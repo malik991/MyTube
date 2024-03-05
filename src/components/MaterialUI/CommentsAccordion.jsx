@@ -6,49 +6,236 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Button from "@mui/material/Button";
 import { BootstrapTooltips } from "./CustomizedTooltips";
-import { Avatar } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
+import { Avatar, IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmationDialog from "./ConfirmationDialog";
+import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
+import { useSelector } from "react-redux";
+import dbServiceObj from "../../apiAccess/confYoutubeApi";
+import TextField from "@mui/material/TextField";
 
-export default function CommentsAccordion({ commentsData }) {
+export default function CommentsAccordion({ initialCommentsData }) {
+  //console.log("ini: ", initialCommentsData);
+  const [commentsData, setCommentsData] = React.useState([]);
+  const [openDeleteDialogs, setOpenDeleteDialogs] = React.useState({});
+  const [isEditing, setIsEditing] = React.useState({});
+  const [editedComments, setEditedComments] = React.useState({});
+  const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
-  let isOwner = false;
+  const [error, setError] = React.useState("");
+
+  React.useEffect(() => {
+    console.log("useEffect called");
+    const initialEditedComments = {};
+    initialCommentsData.forEach((comment) => {
+      initialEditedComments[comment._id] = comment.content;
+    });
+    setEditedComments(initialEditedComments);
+    setCommentsData(initialCommentsData);
+  }, [initialCommentsData]);
+
+  const handleEdit = (commentId) => {
+    setIsEditing((prev) => ({ ...prev, [commentId]: true }));
+    // Perform edit action or toggle edit mode here
+  };
+
+  const handleUpdate = async (commentId) => {
+    setError("");
+    setIsEditing((prev) => ({ ...prev, [commentId]: false }));
+    console.log("Update comment with ID:", commentId);
+    //console.log("Edited content:", editedComments[commentId]);
+    try {
+      const updatedContent = editedComments[commentId];
+      if (!updatedContent) {
+        setError("Please write a comment");
+        return;
+      }
+      // Perform the update action
+      const result = await dbServiceObj.updateComment(
+        commentId,
+        updatedContent
+      );
+      const newContent = result.data?.data?.content;
+
+      console.log("result: ", result.data?.data?.content);
+
+      // Update the comments data array
+      setCommentsData((prevComments) =>
+        prevComments.map((comment) =>
+          comment._id === commentId
+            ? { ...comment, content: newContent }
+            : comment
+        )
+      );
+    } catch (error) {
+      console.log("Error updating comment: ", error);
+      setError(error.response?.data?.message);
+    }
+  };
+
+  const handleConfirmDelete = async (commentId) => {
+    //console.log("Delete comment with ID:", commentId);
+    setError("");
+    setOpenDeleteDialogs((prev) => ({ ...prev, [commentId]: false }));
+    try {
+      if (commentId) {
+        const res = await dbServiceObj.deleteComment(commentId);
+        if (res) {
+          // Update the comments data array
+          setCommentsData(
+            (prevComments) =>
+              prevComments
+                .map((comment) => (comment._id === commentId ? null : comment))
+                .filter(Boolean) // Filter out null values to remove deleted comment
+          );
+        }
+      }
+    } catch (error) {
+      console.log("delete comment: ", error);
+      setError(error.response?.data?.message);
+    }
+
+    // Perform delete action here
+  };
+
+  const handleOpenDeleteDialog = (commentId) => {
+    setOpenDeleteDialogs((prev) => ({ ...prev, [commentId]: true }));
+  };
+
+  const handleCloseDeleteDialog = (commentId) => {
+    setOpenDeleteDialogs((prev) => ({ ...prev, [commentId]: false }));
+  };
+
+  const handleChangeInput = (e, commentId) => {
+    const { value } = e.target;
+    if (value.length <= 90) {
+      setError("");
+      setEditedComments((prev) => ({
+        ...prev,
+        [commentId]: value,
+      }));
+    } else {
+      setError("cannot exceed more than 90 words");
+      // Display a message or handle the case when the comment exceeds 90 characters
+      // For example, you can set an error state to display an error message.
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    return formattedDate;
+  };
+
   return (
     <div className="py-3">
-      {commentsData.length > 0 &&
-        commentsData.map((comment, index) => (
+      {commentsData?.length > 0 &&
+        commentsData?.map((comment, index) => (
           <Accordion style={{ marginTop: 4 }} key={index}>
             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
+              expandIcon={<ExpandMoreIcon style={{ marginLeft: 6 }} />}
               aria-controls={`panel${index}-content`}
               id={`panel${index}-header`}
+              sx={{
+                display: "flex",
+                //justifyContent: "space-between",
+                //paddingLeft: 2,
+              }}
             >
-              <BootstrapTooltips title={comment.owner?.fullName}>
-                <Avatar
-                  src={comment.owner?.avatar}
-                  alt="Owner Avatar"
-                  sx={{ width: 35, height: 35 }}
-                />
-              </BootstrapTooltips>
-              <span className="pl-3">@{comment.owner?.fullName}</span>
+              <div className="flex flex-grow">
+                <BootstrapTooltips title={comment.owner?.fullName}>
+                  <Avatar
+                    src={comment.owner?.avatar}
+                    alt="Owner Avatar"
+                    sx={{ width: 35, height: 35 }}
+                  />
+                </BootstrapTooltips>
+                <span className="pl-3">@{comment.owner?.userName}</span>
+              </div>
+              <span className="text-sm">{formatDate(comment.createdAt)}</span>
             </AccordionSummary>
+            {error && (
+              <p style={{ color: "red", textAlign: "center" }}>{error}</p>
+            )}
             <AccordionDetails className="text-start">
-              {comment.content}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                {isEditing[comment._id] ? (
+                  <TextField
+                    className="px-3 py-2 rounded-lg bg-white text-black outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent border border-gray-200 w-full"
+                    multiline
+                    minRows={2} // Adjust this based on your preference
+                    maxRows={3} // Adjust this based on your preference
+                    value={editedComments[comment._id] || ""}
+                    onChange={(e) => handleChangeInput(e, comment._id)}
+                  />
+                ) : (
+                  <span>{comment.content}</span>
+                )}
+                <div>
+                  {authStatus && userData?.id === comment.owner?._id && (
+                    <>
+                      {isEditing[comment._id] ? (
+                        <IconButton
+                          aria-label="update"
+                          disabled={error}
+                          onClick={() => handleUpdate(comment._id)}
+                        >
+                          <BootstrapTooltips title="Update">
+                            <PublishedWithChangesIcon
+                              style={{ color: "blue", fontSize: "25px" }}
+                            />
+                          </BootstrapTooltips>
+                        </IconButton>
+                      ) : (
+                        <>
+                          <IconButton
+                            aria-label="edit"
+                            onClick={() => handleEdit(comment._id)}
+                          >
+                            <BootstrapTooltips title="Edit">
+                              <EditIcon
+                                style={{ color: "blue", fontSize: "25px" }}
+                              />
+                            </BootstrapTooltips>
+                          </IconButton>
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => handleOpenDeleteDialog(comment._id)}
+                          >
+                            <BootstrapTooltips title="Delete">
+                              <DeleteIcon
+                                style={{ color: "red", fontSize: "25px" }}
+                              />
+                            </BootstrapTooltips>
+                          </IconButton>
+                          <ConfirmationDialog
+                            open={openDeleteDialogs[comment._id] || false}
+                            onClose={() => handleCloseDeleteDialog(comment._id)}
+                            onConfirm={() => handleConfirmDelete(comment._id)}
+                            title="Confirm Deletion"
+                            message="Are you sure you want to delete this comment?"
+                          />
+                        </>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
             </AccordionDetails>
-            {(isOwner = userData?.id === comment.owner?._id)}
             <AccordionActions>
-              {isOwner ? (
-                <>
-                  <Button>Edit</Button>
-                  <Button>Delete</Button>
-                  <Button>Reply</Button>
-                  <Button>Cancel</Button>
-                </>
-              ) : (
-                <>
-                  <Button>Reply</Button>
-                  <Button>Cancel</Button>
-                </>
-              )}
+              <Button>Reply</Button>
             </AccordionActions>
           </Accordion>
         ))}

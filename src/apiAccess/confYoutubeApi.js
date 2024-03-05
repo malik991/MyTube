@@ -392,6 +392,52 @@ export class DBServices {
     }
   }
 
+  // update comment
+  async updateComment(contentId, content) {
+    try {
+      if (!contentId || !content) {
+        return "content Id and content of comment is mendatory";
+      }
+      const formData = new FormData();
+      formData.append("content", content);
+      const res = await axiosInstance.put(
+        `/comment/edit-comment/${contentId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while update comment :: ", error);
+      throw error;
+    }
+  }
+
+  // delete comment
+  async deleteComment(contentId) {
+    try {
+      if (!contentId) {
+        return "comment Id is mendatory";
+      }
+      const res = await axiosInstance.delete(
+        `/comment/delete-comment/${contentId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error in delete comment :: ", error);
+      throw error;
+    }
+  }
+
   // get likes by video Id
   async getLikesByVideoId(videoId) {
     try {
