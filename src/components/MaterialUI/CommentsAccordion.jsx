@@ -14,6 +14,7 @@ import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import { useSelector } from "react-redux";
 import dbServiceObj from "../../apiAccess/confYoutubeApi";
 import TextField from "@mui/material/TextField";
+import Badge from "@mui/material/Badge";
 
 export default function CommentsAccordion({ initialCommentsData }) {
   //console.log("ini: ", initialCommentsData);
@@ -24,6 +25,9 @@ export default function CommentsAccordion({ initialCommentsData }) {
   const authStatus = useSelector((state) => state.auth.status);
   const userData = useSelector((state) => state.auth.userData);
   const [error, setError] = React.useState("");
+  const [likesData, setLikesData] = React.useState({});
+  const [likeBtn, setLikeBtn] = React.useState(false);
+  const [replyBtn, setReplyBtn] = React.useState(false);
 
   React.useEffect(() => {
     console.log("useEffect called");
@@ -132,6 +136,50 @@ export default function CommentsAccordion({ initialCommentsData }) {
     return formattedDate;
   };
 
+  const handleLike = async (commentId) => {
+    setError("");
+    setLikeBtn(!likeBtn);
+    try {
+      const response = await dbServiceObj.toggleCommentLikes(commentId);
+      //let updatedLikes = { ...likesData };
+      if (response?.data?.data?.likedBy) {
+        // console.log("likedata: ", response?.data?.message);
+        setLikesData((prevLikesData) => ({
+          ...prevLikesData,
+          [commentId]: (prevLikesData[commentId] || 0) + 1, // Increment by 1
+        }));
+      } else {
+        // console.log("Dislikedata: ", response?.data?.message);
+        setLikesData((prevLikesData) => ({
+          ...prevLikesData,
+          [commentId]: (prevLikesData[commentId] || 0) - 1, // Decrement by 1
+        }));
+      }
+    } catch (error) {
+      console.error("Error liking comment:", error);
+      setError(error.response?.data?.message);
+      setLikeBtn(false);
+    }
+  };
+
+  const handleOpenReply = (commentId) => {
+    console.log("reply: ", commentId);
+    setReplyBtn(!replyBtn);
+  };
+
+  const handleLikeData = async (commentId) => {
+    setError("");
+    try {
+      const response = await dbServiceObj.getLikesByCommentId(commentId);
+      const updatedLikes = { ...likesData };
+      updatedLikes[commentId] = response?.data?.data[0]?.totalLikes || 0;
+      setLikesData(updatedLikes);
+    } catch (error) {
+      console.log("get like comments: ", error);
+      setError(error.response?.data?.message);
+    }
+  };
+
   return (
     <div className="py-3">
       {commentsData?.length > 0 &&
@@ -139,12 +187,11 @@ export default function CommentsAccordion({ initialCommentsData }) {
           <Accordion style={{ marginTop: 4 }} key={index}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon style={{ marginLeft: 6 }} />}
+              onClick={() => handleLikeData(comment._id)}
               aria-controls={`panel${index}-content`}
               id={`panel${index}-header`}
               sx={{
                 display: "flex",
-                //justifyContent: "space-between",
-                //paddingLeft: 2,
               }}
             >
               <div className="flex flex-grow">
@@ -235,7 +282,31 @@ export default function CommentsAccordion({ initialCommentsData }) {
               </div>
             </AccordionDetails>
             <AccordionActions>
-              <Button>Reply</Button>
+              <Badge
+                badgeContent={likesData[comment._id] || "0"}
+                color="primary"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                overlap="circular"
+                //variant="dot"
+              >
+                <Button
+                  id={`likeBtn-${comment._id}`} // More specific ID with comment ID
+                  onClick={() => handleLike(comment._id)}
+                  style={{ color: likeBtn ? "red" : "blue" }}
+                >
+                  Like
+                </Button>
+              </Badge>
+
+              <Button
+                onClick={() => handleOpenReply(comment._id)}
+                style={{ color: replyBtn ? "green" : "blue" }}
+              >
+                Reply
+              </Button>
             </AccordionActions>
           </Accordion>
         ))}

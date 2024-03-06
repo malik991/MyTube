@@ -438,6 +438,27 @@ export class DBServices {
     }
   }
 
+  // get total likes by comment id
+  async getLikesByCommentId(contentId) {
+    try {
+      if (!contentId) {
+        return "Comment Id is mendatory";
+      }
+      const res = await axiosInstance.get(
+        `/like/liked-comments-by-commentId/${contentId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while getting Totle likes by comment id :: ", error);
+      throw error;
+    }
+  }
+
   // get likes by video Id
   async getLikesByVideoId(videoId) {
     try {
@@ -454,7 +475,7 @@ export class DBServices {
       );
       return res;
     } catch (error) {
-      console.error("Error in getting single playlist by id :: ", error);
+      console.error("Error while getting likes by video ID :: ", error);
       throw error;
     }
   }
@@ -476,6 +497,28 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error while toggle video like :: ", error);
+      throw error;
+    }
+  }
+
+  // toggle comment likes
+  async toggleCommentLikes(contentId) {
+    try {
+      if (!contentId) {
+        return "comment Id is mendatory";
+      }
+      const res = await axiosInstance.post(
+        `/like/toggle/c/${contentId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while toggle comment like :: ", error);
       throw error;
     }
   }
