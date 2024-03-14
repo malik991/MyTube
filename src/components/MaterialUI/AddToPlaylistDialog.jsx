@@ -85,6 +85,7 @@ function AddToPlaylistDialog({ open, onClose, videoId }) {
         error.response.data.message
       );
       setError(error.response?.data.message);
+      setCircularLoading(false);
     } finally {
       setCircularLoading(false);
     }

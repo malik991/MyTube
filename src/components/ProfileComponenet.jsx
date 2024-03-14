@@ -85,6 +85,7 @@ const ProfileComponent = ({ initialData }) => {
         }
       }
     } catch (error) {
+      setBtnClicked(false);
       console.error(
         "error uploading avatar or user detail Image in profile: ",
         error
@@ -94,21 +95,9 @@ const ProfileComponent = ({ initialData }) => {
           "Network error. Please check your internet connection or server is up ?"
         );
       } else {
-        const serverErrorMessage = error.response?.data?.match(
-          /<pre>([\s\S]*?)<\/pre>/
-        )?.[1];
-        if (serverErrorMessage) {
-          const splitContent = serverErrorMessage?.split("<br>");
-          setCustomError(
-            splitContent ? splitContent[0].trim() : "An error occurred"
-          );
-        } else if (error.response) {
-          setCustomError(
-            error.response?.data?.message || "An error occurred, no message"
-          );
-        } else {
-          setCustomError("Error: ", error);
-        }
+        setCustomError(
+          error.response?.data?.message || "An error occurred, no message"
+        );
       }
     } finally {
       setBtnClicked(false);
@@ -145,21 +134,9 @@ const ProfileComponent = ({ initialData }) => {
           "Network error. Please check your internet connection or server is up ?"
         );
       } else {
-        const serverErrorMessage = error.response?.data?.match(
-          /<pre>([\s\S]*?)<\/pre>/
-        )?.[1];
-        if (serverErrorMessage) {
-          const splitContent = serverErrorMessage?.split("<br>");
-          setCustomError(
-            splitContent ? splitContent[0].trim() : "An error occurred"
-          );
-        } else if (error.response) {
-          setCustomError(
-            error.response?.data?.message || "An error occurred, no message"
-          );
-        } else {
-          setCustomError("Error: ", error);
-        }
+        setCustomError(
+          error.response?.data?.message || "An error occurred, no message"
+        );
       }
     }
   };

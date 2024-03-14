@@ -21,7 +21,7 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error in updateTitleDesc:: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   async uploadVideo({ videoFile, thumbNail, title, description, isPublished }) {
@@ -41,7 +41,7 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error in upload video :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   async updateThumbnail({ thumbNail }, videoId) {
@@ -61,7 +61,7 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error in update video thumbnail :: ", error);
-      throw error?.message;
+      throw error;
     }
   }
   async getAllVideos(
@@ -351,7 +351,7 @@ export class DBServices {
       if (!videoId) {
         return "Video Id is mendatory";
       }
-      let url = `/comment/get-comments/${videoId}`;
+      let url = `/comment/main-parent-comments/${videoId}`;
       const queryParams = new URLSearchParams({
         page: page.toString(),
       });
@@ -412,6 +412,55 @@ export class DBServices {
       return res;
     } catch (error) {
       console.error("Error while update comment :: ", error);
+      throw error;
+    }
+  }
+
+  // add reply
+  async addReply(
+    parentCommentId = "64f017c3678dde20ab9ec8b0",
+    replyContent,
+    parentReplyId
+  ) {
+    try {
+      // if (!parentCommentId || !replyContent) {
+      //   return "content Id and content of comment is mendatory";
+      // }
+      const formData = new FormData();
+      formData.append("replyContent", replyContent);
+      formData.append("parentReplyId", parentReplyId);
+      const res = await axiosInstance.post(
+        `/comment/reply-comment/${parentCommentId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return res;
+    } catch (error) {
+      console.error("Error while reply to comment :: ", error);
+      throw error;
+    }
+  }
+
+  // get nested replies
+  async getNestedReplies(parentReplyId) {
+    try {
+      if (!parentReplyId) {
+        return "Parent Reply Id is mendatory";
+      }
+      let url = `/comment/nested-comments/${parentReplyId}`;
+
+      const res = await axiosInstance.get(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return res;
+    } catch (error) {
+      console.error("Error in getting nested replies :: ", error);
       throw error;
     }
   }

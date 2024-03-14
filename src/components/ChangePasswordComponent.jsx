@@ -4,6 +4,9 @@ import { changePassword } from "../apiAccess/auth";
 import { useSelector } from "react-redux";
 import { Button, InputField, Logo } from "./index";
 import { useForm } from "react-hook-form";
+import BackdropMUI from "./MaterialUI/BackDrop";
+import { openSnackbar } from "../store/snackbarSlice";
+import { useDispatch } from "react-redux";
 
 const ChangePasswordComponent = () => {
   const [btnSubmit, setBtnSubmit] = useState(false);
@@ -13,6 +16,8 @@ const ChangePasswordComponent = () => {
   const [customeError, setCustomeError] = useState("");
   const { errors: hookErrors } = formState;
   const newPassword = watch("newPassword", "");
+  const dispatch = useDispatch();
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
 
   const validateReEnterPassword = (value) => {
     if (value === newPassword) {
@@ -29,20 +34,22 @@ const ChangePasswordComponent = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log("on submit clicked", data);
+    //console.log("on submit clicked", data);
     try {
+      setOpenBackdropDialog(true);
       setCustomeError("");
       setBtnSubmit(true);
       if (authStatus && data) {
         const res = await changePassword(data);
         if (res?.data?.success) {
-          //console.log("res is ", res);
+          dispatch(openSnackbar(`Password updated successfully. 😊`));
           navigate("/dashboard/my-videos");
         }
       } else {
         setCustomeError("something wrong while update password");
       }
     } catch (error) {
+      setOpenBackdropDialog(false);
       console.log("error in password change", error);
       if (error.code === "ERR_NETWORK") {
         setCustomeError(
@@ -65,6 +72,7 @@ const ChangePasswordComponent = () => {
         }
       }
     } finally {
+      setOpenBackdropDialog(false);
       setBtnSubmit(false);
     }
   };
@@ -169,6 +177,10 @@ const ChangePasswordComponent = () => {
         </form>
         {/* <DevTool control={control} /> */}
       </div>
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   ) : (
     <p>please login first</p>

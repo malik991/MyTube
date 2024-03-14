@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { registerUser } from "../apiAccess/auth";
 import { InputField, Button, Logo, ImageUploadField } from "./index";
+import BackdropMUI from "./MaterialUI/BackDrop";
 //import { DevTool } from "@hookform/devtools";
 
 function SignUpComponenet() {
@@ -15,6 +16,7 @@ function SignUpComponenet() {
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState; // hook field hookErrors
   const [avatar, setAvatar] = useState(null);
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
 
   async function signUp(data) {
     if (avatar) {
@@ -22,9 +24,8 @@ function SignUpComponenet() {
     } else {
       alert("avater not uloaded");
     }
-    // console.log("data ", data);
-
     setError("");
+    setOpenBackdropDialog(true);
     try {
       setBtnClicked(true);
       const res = await registerUser(data);
@@ -35,28 +36,29 @@ function SignUpComponenet() {
         alert("signup failed, please try again");
       }
     } catch (error) {
+      setOpenBackdropDialog(false);
       console.log("error in signup component: ", error);
-      //setError(error.response?.data?.message || "An error occurred");
       if (error.code === "ERR_NETWORK") {
         setError(
           "Network error. Please check your internet connection or server is up ?"
         );
       } else {
+        setError(
+          error.response?.data?.message || "An error occurred, no message"
+        );
         // Check if response.data contains a meaningful error message
-        const serverErrorMessage = error.response?.data?.match(
-          /<pre>([\s\S]*?)<\/pre>/
-        )?.[1];
-        if (serverErrorMessage) {
-          const splitContent = serverErrorMessage?.split("<br>");
-          setError(splitContent ? splitContent[0].trim() : "An error occurred");
-        } else {
-          setError(
-            error.response?.data?.message || "An error occurred, no message"
-          );
-        }
+        // const serverErrorMessage = error.response?.data?.match(
+        //   /<pre>([\s\S]*?)<\/pre>/
+        // )?.[1];
+        // if (serverErrorMessage) {
+        //   const splitContent = serverErrorMessage?.split("<br>");
+        //   setError(splitContent ? splitContent[0].trim() : "An error occurred");
+        // } else {
+
+        //}
       }
     } finally {
-      // Reset btnClicked to false after the asynchronous process is complete
+      setOpenBackdropDialog(false);
       setBtnClicked(false);
     }
   }
@@ -218,6 +220,10 @@ function SignUpComponenet() {
         </form>
         {/* <DevTool control={control} /> */}
       </div>
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   );
 }

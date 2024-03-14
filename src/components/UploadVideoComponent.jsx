@@ -4,6 +4,9 @@ import InputField from "./InputField";
 import { useNavigate } from "react-router-dom";
 import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { Logo } from "./index";
+import { openSnackbar } from "../store/snackbarSlice";
+import { useDispatch } from "react-redux";
+import BackdropMUI from "./MaterialUI/BackDrop";
 const UploadVideoComponent = ({ initialData }) => {
   const {
     register,
@@ -19,10 +22,15 @@ const UploadVideoComponent = ({ initialData }) => {
     },
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  // const { message } = useSelector((state) => state.snackbar);
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
   const [btnClicked, setBtnClicked] = useState(false);
   const [error, setError] = useState();
+
   const onSubmit = async (data) => {
     setError("");
+    setOpenBackdropDialog(true);
     if (initialData) {
       try {
         const videoId = initialData?._id;
@@ -49,8 +57,14 @@ const UploadVideoComponent = ({ initialData }) => {
               dbServiceObj.updateThumbnail(sendData, videoId),
               dbServiceObj.updateTitleDesc(sendData, videoId),
             ]);
+            if (resThumbNail || resTitle) {
+              dispatch(openSnackbar(`Video updated successfully.😊`));
+            }
           } else {
             const res = await dbServiceObj.updateTitleDesc(sendData, videoId);
+            if (res) {
+              dispatch(openSnackbar(`Video updated successfully.😊`));
+            }
           }
 
           setBtnClicked(false);
@@ -61,65 +75,51 @@ const UploadVideoComponent = ({ initialData }) => {
           console.log("video id not found");
         }
       } catch (error) {
+        setOpenBackdropDialog(false);
         console.log("error in edit video, ", error);
         if (error.code === "ERR_NETWORK") {
           setError(
             "Network error. Please check your internet connection or server is up ?"
           );
         } else {
-          const serverErrorMessage = error.response?.data?.match(
-            /<pre>([\s\S]*?)<\/pre>/
-          )?.[1];
-          if (serverErrorMessage) {
-            const splitContent = serverErrorMessage?.split("<br>");
-            setError(
-              splitContent
-                ? splitContent[0].trim()
-                : "An error occurred uploadvideo component"
-            );
-          } else {
-            setError(
-              error.response?.data?.message ||
-                "An error occurred, no message, upload component"
-            );
-          }
+          setError(
+            error.response?.data?.message ||
+              "An error occurred, no message, upload component"
+          );
         }
         setBtnClicked(false);
+      } finally {
+        setOpenBackdropDialog(false);
       }
     }
     /// for upload new video
     else {
       try {
         setBtnClicked(true);
-        console.log("new video upload: ", data);
+        setOpenBackdropDialog(true);
+        //console.log("new video upload: ", data);
         const res = await dbServiceObj.uploadVideo(data);
         if (res?.data?.data) {
+          dispatch(openSnackbar(`Video uploaded successfully.😊`));
           navigate("/dashboard/my-videos");
         }
       } catch (error) {
+        setOpenBackdropDialog(false);
+        setBtnClicked(false);
         console.log("error in upload video componeent: ", error);
         if (error.code === "ERR_NETWORK") {
           setError(
             "Network error. Please check your internet connection or server is up ?"
           );
         } else {
-          const serverErrorMessage = error.response?.data?.match(
-            /<pre>([\s\S]*?)<\/pre>/
-          )?.[1];
-          if (serverErrorMessage) {
-            const splitContent = serverErrorMessage?.split("<br>");
-            setError(
-              splitContent
-                ? splitContent[0].trim()
-                : "An error occurred uploadvideo component"
-            );
-          } else {
-            setError(
-              error.response?.data?.message ||
-                "An error occurred, no message, upload component"
-            );
-          }
+          setError(
+            error.response?.data?.message ||
+              "An error occurred, no message, upload component"
+          );
         }
+      } finally {
+        setOpenBackdropDialog(false);
+        setBtnClicked(false);
       }
     }
   };
@@ -246,6 +246,10 @@ const UploadVideoComponent = ({ initialData }) => {
           </div>
         </form>
       </div>
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   );
 };

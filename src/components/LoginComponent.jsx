@@ -2,25 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
 import { openSnackbar } from "../store/snackbarSlice";
-
 import { useDispatch } from "react-redux";
 import { Button, InputField, Logo } from "./index";
 import { useForm } from "react-hook-form";
 import { loginUser } from "../apiAccess/auth";
+import BackdropMUI from "./MaterialUI/BackDrop";
 
 function LoginComponent() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { register, handleSubmit, formState } = useForm({});
   const [error, setError] = useState("");
-
   const [btnClicked, setBtnClicked] = useState(false);
   const { errors: hookErrors } = formState;
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
 
   const loginFun = async (data) => {
     setError("");
     try {
       setBtnClicked(true);
+      setOpenBackdropDialog(true);
       const res = await loginUser(data);
       if (res) {
         const sanitizedData = {
@@ -42,8 +43,10 @@ function LoginComponent() {
     } catch (error) {
       console.log("error in login component: ", error);
       setError(error.response?.data?.message || "An error occurred");
+      setOpenBackdropDialog(false);
     } finally {
       setBtnClicked(false);
+      setOpenBackdropDialog(false);
     }
   };
 
@@ -117,6 +120,10 @@ function LoginComponent() {
           </div>
         </form>
       </div>
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   );
 }

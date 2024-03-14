@@ -147,6 +147,7 @@ const VideoCard = ({
     // e.stopPropagation();
     if (!authStatus) {
       alert("please login for enter comment");
+      return;
     } else {
       setUserComment(e.target.value);
       //setValue("comment", e.target.value);
@@ -333,9 +334,13 @@ const VideoCard = ({
               <div className="pt-3 w-full flex flex-col justify-center items-center">
                 <div className="w-full max-w-xl">
                   <h2 className="text-start text-lg font-serif text-red-500 font-semibold">
-                    Comments
+                    Comments : {totalComment}
                   </h2>
-                  <CommentsAccordion initialCommentsData={videoComments} />
+                  <CommentsAccordion
+                    initialCommentsData={videoComments}
+                    videoId={videoId}
+                    currentPage={currentPage}
+                  />
                 </div>
 
                 {totalPages > 1 && (
