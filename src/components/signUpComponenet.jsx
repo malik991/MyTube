@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as authLogin } from "../store/authSlice";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { registerUser } from "../apiAccess/auth";
 import { InputField, Button, Logo, ImageUploadField } from "./index";
 import BackdropMUI from "./MaterialUI/BackDrop";
@@ -10,7 +9,7 @@ import BackdropMUI from "./MaterialUI/BackDrop";
 
 function SignUpComponenet() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  //const dispatch = useDispatch();
   const { register, handleSubmit, control, formState } = useForm({}); //shouldUnregister: true,
   const [error, setError] = useState();
   const [btnClicked, setBtnClicked] = useState(false);

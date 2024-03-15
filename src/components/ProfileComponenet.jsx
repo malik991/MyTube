@@ -9,8 +9,12 @@ import {
 import { Logo, InputField, SidePanel, ImageUploadField } from "./index";
 import { CardMedia, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login as authLogin } from "../store/authSlice";
+import BackdropMUI from "./MaterialUI/BackDrop";
+import { openSnackbar, closeSnackbar } from "../store/snackbarSlice";
+import CustomSnackbar from "./CustomSnackbar";
+import { BootstrapTooltips } from "./MaterialUI/CustomizedTooltips";
 
 const ProfileComponent = ({ initialData }) => {
   const {
@@ -28,9 +32,10 @@ const ProfileComponent = ({ initialData }) => {
     },
   });
 
+  const { message } = useSelector((state) => state.snackbar);
   const navigate = useNavigate();
   const [coverImage, setCoverImage] = useState("");
-  const [dataCoverImage, setDataCoverImage] = useState("");
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
 
   const [updatedAvatar, setupdatedAvatar] = useState("");
   const [btnClicked, setBtnClicked] = useState(false);
@@ -47,6 +52,7 @@ const ProfileComponent = ({ initialData }) => {
 
   const onSubmit = async (userProfileData) => {
     setCustomError("");
+    setOpenBackdropDialog(true);
     userProfileData.updatedAvatar = updatedAvatar;
     try {
       setBtnClicked(true);
@@ -66,6 +72,7 @@ const ProfileComponent = ({ initialData }) => {
             coverImage: resUserDetail.data?.data?.coverImage,
           };
           dispatch(authLogin(updateReduxData));
+          dispatch(openSnackbar(`Detail and Avatar Updated successfully. 😊`));
         }
 
         navigate("/");
@@ -81,11 +88,13 @@ const ProfileComponent = ({ initialData }) => {
             coverImage: result.data?.data?.coverImage,
           };
           dispatch(authLogin(updateReduxData));
+          dispatch(openSnackbar(`Profile Updated successfully. 😊`));
           navigate("/");
         }
       }
     } catch (error) {
       setBtnClicked(false);
+      setOpenBackdropDialog(false);
       console.error(
         "error uploading avatar or user detail Image in profile: ",
         error
@@ -98,10 +107,16 @@ const ProfileComponent = ({ initialData }) => {
         setCustomError(
           error.response?.data?.message || "An error occurred, no message"
         );
+        dispatch(openSnackbar("Error Occured 🎈..."));
       }
     } finally {
       setBtnClicked(false);
+      setOpenBackdropDialog(false);
     }
+  };
+
+  const handleClose = () => {
+    dispatch(closeSnackbar());
   };
 
   const handleUploadCoverImage = async (e) => {
@@ -137,6 +152,7 @@ const ProfileComponent = ({ initialData }) => {
         setCustomError(
           error.response?.data?.message || "An error occurred, no message"
         );
+        dispatch(openSnackbar("Error Occured ...💀"));
       }
     }
   };
@@ -150,33 +166,43 @@ const ProfileComponent = ({ initialData }) => {
   return (
     <div className="flex flex-row">
       <SidePanel />
-
+      {message && (
+        <div className=" flex justify-center items-center py-2">
+          <CustomSnackbar handleClose={handleClose} />
+        </div>
+      )}
       <div className="flex flex-col w-full ml-2 items-center">
         <div className="relative flex-grow  w-full">
           <div style={{ position: "relative", paddingBottom: "32%" }}>
-            <CardMedia
-              component="img"
-              image={coverImage || "placeholder.jpg"}
-              alt="Upload Cover Image"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "8px",
-                cursor: "pointer", // add cursor to make it clickablbe
-              }}
-              onClick={handleEditCoverImage}
-            />
-            <IconButton
-              style={{ position: "absolute", bottom: 8, right: 8 }}
-              color="primary"
-              onClick={handleEditCoverImage} // Call a function to handle editing cover image
-            >
-              <EditIcon />
-            </IconButton>
+            <BootstrapTooltips title="update Image">
+              <CardMedia
+                component="img"
+                image={coverImage || "placeholder.jpg"}
+                alt="Upload Cover Image"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  cursor: "pointer", // add cursor to make it clickablbe
+                }}
+                onClick={handleEditCoverImage}
+              />
+            </BootstrapTooltips>
+
+            <BootstrapTooltips title="update image">
+              <IconButton
+                style={{ position: "absolute", bottom: 8, right: 8 }}
+                color="primary"
+                onClick={handleEditCoverImage} // Call a function to handle editing cover image
+              >
+                <EditIcon />
+              </IconButton>
+            </BootstrapTooltips>
+
             <input
               type="file"
               accept="image/*"
@@ -301,6 +327,10 @@ const ProfileComponent = ({ initialData }) => {
           </form>
         </div>
       </div>
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   );
 };
