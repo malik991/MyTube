@@ -14,12 +14,14 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import playListSlice from "./playListSlice";
+import themeSlice from "./themeSlice";
 
 // Combine multiple slices into a rootReducer
 const rootReducer = combineReducers({
   auth: authSlice,
   snackbar: snackbarSlice,
   playlist: playListSlice,
+  theme: themeSlice,
   //another: anotherSlice,
   // Add more slices as needed
 });

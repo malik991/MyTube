@@ -23,11 +23,29 @@ import Profile from "./pages/Profile.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 import Channel from "./pages/Channel.jsx";
 import PlayListPage from "./pages/PlayListPage.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route path="/" element={<Home isWatchHistory={false} />} />
+      <Route
+        path="/About"
+        element={
+          <ProtectedLayout authentication={false}>
+            <About />
+          </ProtectedLayout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <ProtectedLayout authentication={false}>
+            <Contact />
+          </ProtectedLayout>
+        }
+      />
       <Route
         path="/login"
         element={

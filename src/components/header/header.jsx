@@ -52,15 +52,20 @@ function Header() {
     //console.log("close called: ", searchVideo);
   };
 
-  // const options = [
-  //   { label: "Profile", value: "profile" },
-  //   { label: "Logout", value: "logout", action: handleLogout },
-  // ];
-
   const navItems = [
     {
       name: "Home",
       slug: "/",
+      active: true,
+    },
+    {
+      name: "About",
+      slug: "/about",
+      active: true,
+    },
+    {
+      name: "Contact",
+      slug: "/contact",
       active: true,
     },
     {
