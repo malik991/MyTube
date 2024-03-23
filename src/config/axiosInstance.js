@@ -29,7 +29,7 @@ axiosInstance.interceptors.response.use(
   async function (error) {
     const originalRequest = error.config;
 
-    if (error.response.status === 403 && !error.response.data.success) {
+    if (error?.response?.status === 403 && !error.response.data.success) {
       try {
         console.log(
           "new Error: ",

@@ -12,14 +12,14 @@ const Root = styled("div")(({ theme }) => ({
   },
 }));
 
-export default function DividerText({ text }) {
+export default function DividerText({ text, label }) {
   const content = <p>{text}</p>;
 
   return (
     <Root>
       {content}
       <Divider>
-        <Chip label="Play List" size="small" />
+        <Chip label={label} size="small" />
       </Divider>
     </Root>
   );

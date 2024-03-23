@@ -1,6 +1,8 @@
-//import conf from "../config/viteConfiguration";
+import conf from "../config/viteConfiguration";
 //import axios from "axios";
 import axiosInstance from "../config/axiosInstance";
+import axios from "axios";
+
 // login
 export const loginUser = async ({ emailOrUserName, password }) => {
   try {
@@ -19,6 +21,7 @@ export const loginUser = async ({ emailOrUserName, password }) => {
     throw error;
   }
 };
+
 // register user
 export const registerUser = async ({
   userName,

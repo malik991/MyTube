@@ -61,12 +61,12 @@ function Header() {
     {
       name: "About",
       slug: "/about",
-      active: true,
+      active: !authStatus,
     },
     {
       name: "Contact",
       slug: "/contact",
-      active: true,
+      active: !authStatus,
     },
     {
       name: "Login",
@@ -96,7 +96,7 @@ function Header() {
   ];
 
   return (
-    <header className="py-3 shadow-xl ring-inherit bg-[#F3F3F3] rounded-lg mx-2 mt-2">
+    <header className="py-3 shadow-xl ring-inherit bg-[#F3F3F3] rounded-sm mt-2">
       <Container>
         <nav className="flex items-center justify-between">
           <>

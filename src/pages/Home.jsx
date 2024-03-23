@@ -3,9 +3,11 @@ import dbServiceObj from "../apiAccess/confYoutubeApi";
 import { VideoCard, Container, Button } from "../components";
 import { getWatchHistory } from "../apiAccess/auth";
 import { useSelector, useDispatch } from "react-redux";
-import { closeSnackbar } from "../store/snackbarSlice";
+import { closeSnackbar, openSnackbar } from "../store/snackbarSlice";
 import CustomSnackbar from "../components/CustomSnackbar";
 import CheckboxComponent from "../components/MaterialUI/CheckboxComponent";
+import { login as authLogin } from "../store/authSlice";
+import axiosInstance from "../config/axiosInstance";
 
 function Home({ isWatchHistory }) {
   const [getVideos, setVideos] = useState([]);
@@ -22,6 +24,7 @@ function Home({ isWatchHistory }) {
 
   useEffect(() => {
     fetchData(currentPage);
+    getUser();
   }, [currentPage, isWatchHistory, sortAscending, sortByTitle]);
 
   const fetchData = async (page) => {
@@ -50,6 +53,39 @@ function Home({ isWatchHistory }) {
     } catch (error) {
       console.log("Error fetching videos:", error);
       setError(error);
+    }
+  };
+
+  const getUser = async () => {
+    try {
+      // console.log("cookies: ", document.cookie);
+      // const cookies = document.cookie.split(";");
+      // const hasConnectSid = cookies.some((cookie) =>
+      //   cookie.trim().startsWith("connect.sid=")
+      // );
+
+      // if (hasConnectSid) {
+      const res = await axiosInstance.get(`/oauth/login/success`, {});
+      if (res) {
+        //console.log("res user: ", res.data.data?.user);
+        const sanitizedData = {
+          id: res.data?.data?.user?._id,
+          userName: res.data?.data?.user?.userName,
+          email: res.data?.data?.user?.email,
+          fullName: res.data?.data?.user?.fullName,
+          avatar: res.data?.data?.user?.avatar,
+          coverImage: res.data?.data?.user?.coverImage,
+        };
+        dispatch(authLogin(sanitizedData));
+        dispatch(
+          openSnackbar(`Welcome, ${sanitizedData.userName} to My-Tube.😊`)
+        );
+      }
+      // } else {
+      //   console.log("no session availabe");
+      // }
+    } catch (error) {
+      console.log("error due to login/success: ", error);
     }
   };
 
