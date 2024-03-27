@@ -61,8 +61,9 @@ function LoginComponent() {
       setError(error.data?.response?.message);
     }
   };
-  const handleGithubLogin = (e) => {
-    console.log("Github click: ", e.target);
+  const handleGithubLogin = () => {
+    window.open(`${conf.ServerUrl}/oauth/github`, "_self");
+    //window.location.href = `${conf.ServerUrl}/oauth/github`;
   };
 
   return (
@@ -175,8 +176,7 @@ function LoginComponent() {
           </button>
 
           <button
-            disabled={true}
-            onClick={(e) => handleGithubLogin(e)}
+            onClick={handleGithubLogin}
             type="button"
             className="py-2 px-4 flex justify-center items-center  bg-gray-600 hover:bg-gray-700 focus:ring-gray-500 focus:ring-offset-gray-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
           >
