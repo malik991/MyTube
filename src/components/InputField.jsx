@@ -11,7 +11,7 @@ const InputField = React.forwardRef(function Input(
     <div className="w-full text-left">
       {label && (
         <label
-          className="inline-block mb-1 pl-1 font-serif text-xl"
+          className={`inline-block mb-1 pl-1 font-serif text-xl ${className}`}
           htmlFor={props.id || id}
         >
           {label}

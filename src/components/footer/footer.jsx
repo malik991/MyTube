@@ -4,7 +4,10 @@ import Logo from "../logo";
 
 function Footer() {
   return (
-    <footer className="bg-[#F3F3F3] border-y shadow-xl rounded-sm ">
+    <footer
+      className="bg-[#1976D2] border-y rounded-sm mb-4 "
+      style={{ boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.2)" }}
+    >
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">
@@ -21,7 +24,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase">
                 Resources
               </h2>
-              <ul className="text-gray-500 font-medium">
+              <ul className="text-white font-medium">
                 <li className="mb-4">
                   <Link to="/" className="hover:underline">
                     Home
@@ -43,7 +46,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase">
                 Follow us
               </h2>
-              <ul className="text-gray-500 font-medium">
+              <ul className="text-white font-medium">
                 <li className="mb-4">
                   <a
                     href="https://github.com/malik991"
@@ -75,7 +78,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase">
                 Legal
               </h2>
-              <ul className="text-gray-500 font-medium">
+              <ul className="text-white font-medium">
                 <li className="mb-4">
                   <Link to="#" className="hover:underline">
                     Privacy Policy
@@ -90,9 +93,9 @@ function Footer() {
             </div>
           </div>
         </div>
-        <hr className="my-6 border-gray-400 sm:mx-auto lg:my-8" />
+        <hr className="my-6 border-gray-700 sm:mx-auto lg:my-8 " />
         <div className="sm:flex sm:items-center sm:justify-between">
-          <span className="text-sm text-gray-500 sm:text-center">
+          <span className="text-sm text-white sm:text-center">
             @Copyright {new Date().getFullYear()}
             <a href="https://hiteshchoudhary.com/" className="hover:underline">
               -Al-Rehman
@@ -100,7 +103,11 @@ function Footer() {
             . All Rights Reserved.
           </span>
           <div className="flex mt-4 space-x-5 sm:justify-center sm:mt-0">
-            <Link to="#" className="text-gray-500 hover:text-gray-900">
+            <Link
+              to="https://web.facebook.com/malik.m.hassan"
+              target="_blank"
+              className="text-white hover:text-gray-900"
+            >
               <svg
                 className="w-4 h-4"
                 aria-hidden="true"
@@ -116,7 +123,11 @@ function Footer() {
               </svg>
               <span className="sr-only">Facebook page</span>
             </Link>
-            <Link to="#" className="text-gray-500">
+            <Link
+              to="https://discord.com/users/malik_68713_49571"
+              className="text-white hover:text-gray-900"
+              target="_blank"
+            >
               <svg
                 className="w-4 h-4"
                 aria-hidden="true"
@@ -128,7 +139,11 @@ function Footer() {
               </svg>
               <span className="sr-only">Discord community</span>
             </Link>
-            <Link to="#" className="text-gray-500">
+            <Link
+              to="https://x.com/malik9914"
+              target="_blank"
+              className="text-white hover:text-gray-900"
+            >
               <svg
                 className="w-4 h-4"
                 aria-hidden="true"
@@ -144,7 +159,11 @@ function Footer() {
               </svg>
               <span className="sr-only">Twitter page</span>
             </Link>
-            <Link to="#" className="text-gray-500">
+            <Link
+              to="https://github.com/malik991"
+              target="_blank"
+              className="text-white hover:text-gray-900"
+            >
               <svg
                 className="w-4 h-4"
                 aria-hidden="true"
@@ -160,7 +179,11 @@ function Footer() {
               </svg>
               <span className="sr-only">GitHub account</span>
             </Link>
-            <Link to="#" className="text-gray-500">
+            <Link
+              to="https://www.youtube.com/c/RealEstateandTechnology"
+              target="_blank"
+              className="text-white hover:text-gray-900"
+            >
               <svg
                 className="w-4 h-4"
                 aria-hidden="true"

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import SidePanel from "./SidePanel";
-import { Container } from "../components";
 import { useSelector, useDispatch } from "react-redux";
 import { dashBoardData } from "../apiAccess/dashBoardApi";
 import { Outlet, useLocation } from "react-router-dom";
@@ -65,7 +64,7 @@ const DashBoardComponent = () => {
       {
         label: "Count",
         data: [totalVideos, totalVideoViews, totalSubscribers, totalLikes],
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50"],
+        backgroundColor: ["#FAA300", "#A0153E", "#008DDA", "#FFB5DA"],
         borderColor: "black",
         borderWidth: 1,
       },
@@ -97,21 +96,34 @@ const DashBoardComponent = () => {
                 }}
               ></Bar>
             </div>
-            <div className="py-2">
-              <h2>
-                Total Videos:{" "}
-                <span className="text-red-500 text-xl font-semibold">
+            <div className="py-2 bg-customLightGreen mx-3 px-4 flex items-center justify-evenly">
+              <div className="py-2 flex flex-col">
+                <h1>Videos</h1>
+                <span className="text-red-500 py-2 text-xl font-semibold">
                   {totalVideos}
-                </span>{" "}
-              </h2>
-              <h2>
-                Total Views:{" "}
-                <span className="text-red-500 text-xl font-semibold">
+                </span>
+              </div>
+              <hr className="border-l-4 border-customeBorderLine h-1/2" />
+              <div className="py-2 flex flex-col">
+                <h1>Views</h1>
+                <span className="text-red-500 py-2 text-xl font-semibold">
                   {totalVideoViews}
                 </span>
-              </h2>
-              <h2>Total Subscribers: {totalSubscribers}</h2>
-              <h2>Total Likes: {totalLikes}</h2>
+              </div>
+              <hr className="border-l-4 border-customeBorderLine h-1/2 " />
+              <div className="py-2 flex flex-col">
+                <h1>Subscribers</h1>
+                <span className="text-red-500 py-2 text-xl font-semibold">
+                  {totalSubscribers}
+                </span>
+              </div>
+              <hr className="border-l-4 border-customeBorderLine h-1/2" />
+              <div className="py-2 flex flex-col">
+                <h1>Likes</h1>
+                <span className="text-red-500 py-2 text-xl font-semibold">
+                  {totalLikes}
+                </span>
+              </div>
             </div>
           </>
         )}

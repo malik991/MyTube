@@ -99,9 +99,7 @@ const SubscribersPopover = ({
                   my: 1,
                   width: "100%",
                   maxWidth: 360,
-                  borderRadius: 2,
-                  border: "1px solid",
-                  borderColor: "divider",
+
                   backgroundColor: "background.paper",
                 }}
               >
@@ -116,7 +114,7 @@ const SubscribersPopover = ({
                           />
                         </span>
                         <span className="ml-2">@</span>
-                        <span className="underline text-lg text-green-600">
+                        <span className="underline text-lg text-green-600 hover:text-red-600">
                           <a
                             href={`/channel?channelname=${channel.subscriber.userName}`}
                           >

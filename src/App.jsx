@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "./store/themeSlice";
-import { Header, Footer, SidePanel } from "./components/index";
+import { Footer, SidePanel } from "./components/index";
 import { Outlet } from "react-router-dom";
 import "./App.css";
 import "daisyui/dist/full.css";
+import ResponsiveAppBar from "./components/header/ResponsiveAppBar";
 
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.state);
@@ -42,7 +43,7 @@ function App() {
       </div>
       <div className="w-full block">
         <div className="w-full">
-          <Header />
+          <ResponsiveAppBar />
         </div>
         <main className="my-2 flex-grow">
           {isAuthenticated && <SidePanel />}

@@ -34,6 +34,8 @@ import CustomSnackbar from "./CustomSnackbar";
 import { BootstrapTooltips } from "./MaterialUI/CustomizedTooltips";
 import CommentsAccordion from "./MaterialUI/CommentsAccordion";
 import Pagination from "@mui/material/Pagination";
+import BackdropMUI from "./MaterialUI/BackDrop";
+import { openSnackbar } from "../store/snackbarSlice";
 const VideoCard = ({
   thumbnail,
   videoFile,
@@ -50,7 +52,6 @@ const VideoCard = ({
   isExpanded,
   setExpandedVideo,
 }) => {
-  //console.log("chnal: ", channelName);
   const videoRef = useRef(null);
   const [videoComments, setVideoComments] = useState([]);
   const [userComment, setUserComment] = useState("");
@@ -62,6 +63,7 @@ const VideoCard = ({
   const [deleteStatus, setDeleteStatus] = useState(false);
   const { message } = useSelector((state) => state.snackbar);
   const dispatch = useDispatch();
+  const [openBackdropDialog, setOpenBackdropDialog] = useState(false);
 
   const [hovered, setHovered] = useState(false);
   const authStatus = useSelector((state) => state.auth.status);
@@ -72,6 +74,7 @@ const VideoCard = ({
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [addToPlaylistOpen, setAddToPlaylistOpen] = useState(false);
   // check the owner and logged in user
   let isOwnerMatched = false;
@@ -146,8 +149,9 @@ const VideoCard = ({
   const handleCommentChange = (e) => {
     // e.stopPropagation();
     if (!authStatus) {
-      alert("please login for enter comment");
-      return;
+      // alert("please login for enter comment");
+      // return;
+      setConfirmationOpen(true);
     } else {
       setUserComment(e.target.value);
       //setValue("comment", e.target.value);
@@ -155,11 +159,9 @@ const VideoCard = ({
   };
 
   const handleCommentSubmit = async (e) => {
-    // Implement logic to submit the user's comment to the backend
     //e.preventDefault();
     setBtnClicked(true);
     try {
-      //console.log("comment  ", userComment, " video ", videoId);
       const res = await dbServiceObj.addComment(userComment, videoId);
 
       if (res && res?.data) {
@@ -169,7 +171,6 @@ const VideoCard = ({
           avatar: res.data.data[0]?.owner?.avatar,
           content: userComment,
         };
-        //console.log("newCOmment: ", newComment);
         setVideoComments((prevComments) => [...prevComments, newComment]);
         setUserComment(""); // Clear the comment input field
       } else {
@@ -185,7 +186,8 @@ const VideoCard = ({
   const handleLikeClick = async () => {
     // Implement logic to submit the user's like to the backend
     if (!authStatus) {
-      alert("please login for like the video");
+      // alert("please login for like the video");
+      setConfirmationOpen(true);
     } else {
       setLikedBtn(!likedBtn);
       try {
@@ -208,28 +210,53 @@ const VideoCard = ({
   };
 
   const handleDeleteVideo = async (e) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this video?"
-    );
-    if (confirmDelete) {
-      // User clicked OK, proceed with deletion
-      setDeleteBtn(true);
-      try {
-        //console.log("delete called", videoId);
-        if (videoId) {
-          await dbServiceObj.deleteVideo(videoId);
-        }
-        setDeleteBtn(false);
-        setDeleteStatus(true);
-        navigate("/");
-      } catch (error) {
-        console.log("error deleting video from VideoCard: ", error);
-        setDeleteBtn(false);
-        setDeleteStatus(false);
+    // const confirmDelete = window.confirm(
+    //   "Are you sure you want to delete this video?"
+    // );
+    // if (confirmDelete) {
+    //   // User clicked OK, proceed with deletion
+    //   setDeleteBtn(true);
+    //   setOpenBackdropDialog(true);
+    //   try {
+    //     if (videoId) {
+    //       await dbServiceObj.deleteVideo(videoId);
+    //     }
+    //     dispatch(openSnackbar(`video deleted successfully.😊`));
+    //     setDeleteBtn(false);
+    //     setDeleteStatus(true);
+    //     navigate("/");
+    //   } catch (error) {
+    //     console.log("error deleting video from VideoCard: ", error);
+    //     setDeleteBtn(false);
+    //     setDeleteStatus(false);
+    //     setOpenBackdropDialog(false);
+    //   }
+    // } else {
+    //   // User clicked Cancel, do nothing
+    //   console.log("Deletion cancelled");
+    // }
+    if (authStatus) {
+      setDeleteConfirmationOpen(true);
+    }
+  };
+
+  const handleConfirmDelete = async (e) => {
+    setDeleteConfirmationOpen(false);
+    setDeleteBtn(true);
+    setOpenBackdropDialog(true);
+    try {
+      if (videoId) {
+        await dbServiceObj.deleteVideo(videoId);
       }
-    } else {
-      // User clicked Cancel, do nothing
-      console.log("Deletion cancelled");
+      dispatch(openSnackbar(`video deleted successfully.😊`));
+      setDeleteBtn(false);
+      setDeleteStatus(true);
+      navigate("/");
+    } catch (error) {
+      console.log("error deleting video from VideoCard: ", error);
+      setDeleteBtn(false);
+      setDeleteStatus(false);
+      setOpenBackdropDialog(false);
     }
   };
 
@@ -281,6 +308,7 @@ const VideoCard = ({
   const handleClose = () => {
     // Close the dialog without taking any action
     setConfirmationOpen(false);
+    setDeleteConfirmationOpen(false);
   };
 
   return (
@@ -331,6 +359,39 @@ const VideoCard = ({
                   <MenuComponent menuItems={menuItems} />
                 </div>
               </div>
+              <div className="w-full flex flex-col justify-center items-center">
+                <div className="w-full max-w-xl">
+                  <form
+                    className="mt-3"
+                    onSubmit={handleSubmit(handleCommentSubmit)}
+                    noValidate
+                  >
+                    <div className="space-y-5">
+                      <InputField
+                        label="Type.."
+                        className="text-black-400 font-thin text-sm"
+                        placeholder="Enter your commnet ..."
+                        rows="4"
+                        value={userComment}
+                        type="textarea"
+                        {...register("comment", {
+                          required: "please write your comment, before submit",
+                        })}
+                        onChange={handleCommentChange}
+                      />
+                      {hookErrors.comment?.message && (
+                        <p className="text-red-600 text-sm text-left mt-0 mb-0">
+                          {hookErrors.comment.message}
+                        </p>
+                      )}
+
+                      <Button type="submit" disabled={btnClicked}>
+                        {btnClicked ? "Wait..." : "Submit"}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
               <div className="pt-3 w-full flex flex-col justify-center items-center">
                 <div className="w-full max-w-xl">
                   <h2 className="text-start text-lg font-serif text-red-500 font-semibold">
@@ -355,49 +416,28 @@ const VideoCard = ({
                   </div>
                 )}
               </div>
-              <div>
-                <form
-                  className="mt-8"
-                  onSubmit={handleSubmit(handleCommentSubmit)}
-                  noValidate
-                >
-                  <div className="space-y-5">
-                    <InputField
-                      label="Comment:"
-                      placeholder="Enter your commnet!"
-                      value={userComment}
-                      type="text"
-                      {...register("comment", {
-                        required: "please write your comment, before submit",
-                      })}
-                      onChange={handleCommentChange}
-                    />
-                    {hookErrors.comment?.message && (
-                      <p className="text-red-600 text-sm text-left mt-0 mb-0">
-                        {hookErrors.comment.message}
-                      </p>
-                    )}
-
-                    <Button type="submit" disabled={btnClicked}>
-                      {btnClicked ? "Wait..." : "Submit"}
-                    </Button>
-                  </div>
-                </form>
-              </div>
             </div>
           </>
         ) : (
           <Card className="relative group overflow-hidden transition duration-300 transform hover:scale-105">
             <CardActionArea onClick={(e) => handleVideoClick(e)}>
-              <CardMedia
-                className="w-full h-60 object-cover"
-                component="img"
-                alt="Video Thumbnail"
-                height="140"
-                image={thumbnail}
-                title="Video Thumbnail"
-              />
-              <CardContent className="bg-gray-100">
+              <div className="w-full h-0 pb-56 overflow-hidden relative">
+                <CardMedia
+                  className="absolute inset-0"
+                  component="img"
+                  alt="Video Thumbnail"
+                  image={thumbnail}
+                  title="Video Thumbnail"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                  }}
+                />
+              </div>
+
+              <CardContent className="bg-customBlue">
                 <Typography variant="body2" color="textSecondary" component="p">
                   <span>
                     {duration}
@@ -418,7 +458,7 @@ const VideoCard = ({
                 </Typography>
               </CardContent>
             </CardActionArea>
-            <CardContent className="bg-gray-100">
+            <CardContent className="bg-customLightGreen">
               <Grid container alignItems={"center"}>
                 <Grid item xs={12} sm={true} md={true} lg={true}>
                   <Typography
@@ -474,6 +514,7 @@ const VideoCard = ({
               </Grid>
             </CardContent>
             <CardHeader
+              className="bg-customeCardHeader"
               title={
                 <Typography
                   //variant="h4"
@@ -527,7 +568,14 @@ const VideoCard = ({
         onClose={handleClose}
         onConfirm={handleConfirm}
         title="Login Required"
-        message="You need to login to add this video to your playlist. Do you want to proceed to login?"
+        message="You need to login for this action. Do you want to proceed to login?"
+      />
+      <ConfirmationDialog
+        open={deleteConfirmationOpen}
+        onClose={handleClose}
+        onConfirm={(e) => handleConfirmDelete(e)}
+        title="Video Delete 💣"
+        message="Are you sure for this action?"
       />
       {addToPlaylistOpen && (
         <AddToPlaylistDialog
@@ -536,6 +584,10 @@ const VideoCard = ({
           videoId={videoId}
         />
       )}
+      <BackdropMUI
+        open={openBackdropDialog}
+        onClose={() => setOpenBackdropDialog(false)}
+      />
     </div>
   );
 };
